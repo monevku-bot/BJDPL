@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kinerja BJDPL CP Pamanukan — Perbandingan DtD 18 vs 19 November 2026</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f3f6f4;
+      color: #1e293b;
+    }
+    .pegadaian-header {
+      background: linear-gradient(135deg, #007a33 0%, #009944 60%, #00a859 100%);
+    }
+    .template-banner {
+      background-color: #009944;
+    }
+    .template-th {
+      background-color: #009944;
+      color: #ffffff;
+      border: 1px solid #047837;
+    }
+    .template-outlet-row {
+      background-color: #e6efe0;
+      font-weight: 700;
+      color: #14532d;
+    }
+    .template-total-row {
+      background-color: #009944;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    .matrix-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .matrix-table td, .matrix-table th {
+      border: 1px solid #cbd5e1;
+      white-space: nowrap;
+    }
+    .matrix-table thead th {
+      border-color: #05833c;
+    }
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+    }
+    .sticky-header {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+    }
+    .cell-highlight-up {
+      background-color: #fef2f2 !important;
+      color: #b91c1c !important;
+      font-weight: 700;
+    }
+    .cell-highlight-down {
+      background-color: #ecfdf5 !important;
+      color: #047857 !important;
+      font-weight: 700;
+    }
+    .tab-btn.active {
+      background-color: #008a3d;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 138, 61, 0.25);
+    }
+    .tab-btn:not(.active) {
+      background-color: #ffffff;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    .tab-btn:not(.active):hover {
+      background-color: #f0fdf4;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+    .mode-pill.active {
+      background-color: #065f46;
+      color: #ffffff;
+    }
+    .mode-pill:not(.active) {
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+    .mode-pill:not(.active):hover {
+      background-color: #e2e8f0;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff; }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+
+  <!-- TOP HEADER -->
+  <header class="pegadaian-header text-white shadow-md">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <div class="flex items-start sm:items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 16v-4m5 4V8m5 8v-6"/></svg>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight uppercase">KINERJA BJDPL CP PAMANUKAN</h1>
+            <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-white/20 border border-white/30">6 Outlet Template</span>
+          </div>
+          <p class="text-emerald-50 text-xs sm:text-sm mt-0.5">
+            Perbandingan Day-to-Day (DtD): <strong class="text-white">18 November 2026</strong> vs <strong class="text-white">19 November 2026</strong> &bull; Nominal (OSL) &amp; Rekening
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 no-print">
+        <div class="inline-flex rounded-lg bg-black/15 p-1 border border-white/20 text-xs font-medium">
+          <button id="fmtShortBtn" onclick="setNumFormat('short')" class="px-2.5 py-1 rounded-md bg-white text-emerald-800 font-semibold transition">Ringkas (Jt/M)</button>
+          <button id="fmtFullBtn" onclick="setNumFormat('full')" class="px-2.5 py-1 rounded-md text-emerald-50 hover:text-white transition">Rupiah Penuh</button>
+        </div>
+        <button onclick="copyWASummary()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-bold shadow-sm transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copyBtnText">Salin Ringkasan WA</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-5 space-y-5">
+
+    <!-- 4 KPI CARDS -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="kpiGrid"></section>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="flex flex-wrap items-center justify-between gap-3 no-print">
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="switchTab('matrix')" id="tab-matrix" class="tab-btn active inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+          Matriks Template (Aging)
+        </button>
+        <button onclick="switchTab('outlet')" id="tab-outlet" class="tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>
+          Analisa Per Outlet
+        </button>
+        <button onclick="switchTab('product')" id="tab-product" class="tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          Analisa Per Produk
+        </button>
+        <button onclick="switchTab('aging')" id="tab-aging" class="tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          Aging &amp; Risiko
+        </button>
+      </div>
+      <div class="text-xs text-slate-500 flex items-center gap-3">
+        <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Penambahan BJDPL (+)</span>
+        <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Penurunan / Membaik (-)</span>
+      </div>
+    </nav>
+
+    <!-- TAB 1: MATRIKS TEMPLATE (EXACT TEMPLATE REPLICA + DTD) -->
+    <section id="panel-matrix" class="space-y-4">
+      <!-- Executive Insight Strip -->
+      <div class="bg-white rounded-2xl border border-emerald-200/80 shadow-sm p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="text-sm text-slate-700 leading-relaxed">
+            <strong class="text-slate-900">Ringkasan Pergerakan DtD (18 &rarr; 19 Nov 2026):</strong>
+            Total BJDPL naik <strong class="text-rose-700">+Rp 397,96 Jt (+3,45%)</strong> dan <strong class="text-rose-700">+13 Rekening (+1,82%)</strong>.
+            Penambahan didominasi <strong class="text-slate-900">GADAI KCA (98,2%)</strong> dan berpusat di <strong class="text-slate-900">UPC Rancasari (+Rp 206,49 Jt / 51,9%)</strong> serta <strong class="text-slate-900">UPC Pasar Wates (+Rp 90,22 Jt / 22,7%)</strong>.
+            Satu-satunya penurunan terjadi pada <strong class="text-emerald-700">Mulia Ultimate Konven di UPC Pasar Wates (-1 Rek / -Rp 6,89 Jt)</strong>, sementara <strong class="text-slate-900">BRI Unit Bojongkeding</strong> stabil tanpa penambahan.
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix Controls -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-3 no-print">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">Tampilan:</span>
+            <button onclick="setMatrixMode('curr')" id="mode-curr" class="mode-pill active px-3 py-1.5 rounded-lg text-xs font-semibold transition">Posisi 19 Nov 2026</button>
+            <button onclick="setMatrixMode('prev')" id="mode-prev" class="mode-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition">Posisi 18 Nov 2026</button>
+            <button onclick="setMatrixMode('delta')" id="mode-delta" class="mode-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition">Selisih DtD (19 vs 18 Nov)</button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="matrixOutletFilter" onchange="renderMatrix()" class="text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="ALL">Semua 6 Outlet Template</option>
+            </select>
+            <label class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg cursor-pointer select-none">
+              <input type="checkbox" id="highlightDeltaToggle" checked onchange="renderMatrix()" class="rounded text-emerald-600 focus:ring-emerald-500" />
+              Sorot Perubahan DtD
+            </label>
+          </div>
+        </div>
+
+        <!-- Template Green Banner -->
+        <div class="template-banner text-white text-center py-2.5 px-4">
+          <h2 id="matrixBannerTitle" class="text-sm sm:text-base font-extrabold tracking-wide uppercase">
+            KINERJA BJDPL CP PAMANUKAN - 19 NOVEMBER 2026
+          </h2>
+        </div>
+
+        <!-- Scrollable Matrix Table -->
+        <div class="overflow-x-auto">
+          <table class="matrix-table text-xs tabular-nums" id="matrixTable"></table>
+        </div>
+        <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+          <span>* Sel dengan sorotan merah muda menunjukkan penambahan BJDPL dari 18 Nov ke 19 Nov; sorotan hijau menunjukkan penurunan (membaik). Arahkan kursor ke sel untuk rincian exact Rupiah &amp; selisih DtD.</span>
+          <span class="font-medium text-slate-600">Sumber: Detail BJDPL Nominal &amp; Rekening (18 &amp; 19 Nov 2026)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ANALISA PER OUTLET -->
+    <section id="panel-outlet" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Perbandingan BJDPL per Outlet (18 vs 19 Nov 2026)</h3>
+              <p class="text-xs text-slate-500">Khusus 6 outlet sesuai template CP Pamanukan</p>
+            </div>
+            <div class="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+              <button id="outletChartOslBtn" onclick="setOutletChartMetric('osl')" class="px-2.5 py-1 rounded-md bg-emerald-700 text-white transition">OSL (Juta Rp)</button>
+              <button id="outletChartRekBtn" onclick="setOutletChartMetric('rek')" class="px-2.5 py-1 rounded-md text-slate-600 transition">Rekening</button>
+            </div>
+          </div>
+          <div class="relative h-72">
+            <canvas id="outletCompareChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-900">Peringkat Penambahan DtD per Outlet (Juta Rp)</h3>
+            <p class="text-xs text-slate-500">Urutan kontribusi kenaikan OSL BJDPL (18 &rarr; 19 Nov)</p>
+          </div>
+          <div class="relative h-72">
+            <canvas id="outletDeltaChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outlet Summary Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Ringkasan Kinerja &amp; Penambahan DtD per Outlet</h3>
+            <p class="text-xs text-slate-500">Klik baris outlet untuk melihat rincian produk pemicu perubahan di bawah</p>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left tabular-nums" id="outletSummaryTable"></table>
+        </div>
+      </div>
+
+      <!-- Outlet Drilldown Detail -->
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm p-5" id="outletDrilldownBox"></div>
+    </section>
+
+    <!-- TAB 3: ANALISA PER PRODUK -->
+    <section id="panel-product" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-900">Komposisi OSL BJDPL per Produk (19 Nov 2026)</h3>
+            <p class="text-xs text-slate-500">Proporsi eksposur dari total Rp 11,92 M</p>
+          </div>
+          <div class="relative h-72">
+            <canvas id="productDonutChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-900">Analisa Penambahan DtD per Produk (18 &rarr; 19 Nov)</h3>
+            <p class="text-xs text-slate-500">Hanya 2 produk bergerak: Gadai KCA (+Rp 390,73 Jt) &amp; Mulia Ultimate Konven (+Rp 7,23 Jt)</p>
+          </div>
+          <div class="relative h-72">
+            <canvas id="productDeltaChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Summary Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900">Perbandingan DtD per Produk (Konsolidasi 6 Outlet)</h3>
+          <p class="text-xs text-slate-500">Rekening, OSL, selisih DtD, dan kontribusi terhadap total penambahan</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left tabular-nums" id="productSummaryTable"></table>
+        </div>
+      </div>
+
+      <!-- Exact Movement Audit Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Rincian Seluruh Pergerakan DtD (Outlet &times; Produk &times; Bucket Umur)</h3>
+            <p class="text-xs text-slate-500">11 titik pergerakan yang membentuk total selisih +Rp 397.958.576 (+13 Rekening)</p>
+          </div>
+          <select id="moveProductFilter" onchange="renderMovementTable()" class="text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-slate-700">
+            <option value="ALL">Semua Produk Bergerak</option>
+            <option value="GADAI KCA">GADAI KCA</option>
+            <option value="MULIA ULTIMATE KONVEN">MULIA ULTIMATE KONVEN</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left tabular-nums" id="movementAuditTable"></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: AGING & RISIKO -->
+    <section id="panel-aging" class="hidden space-y-5">
+      <!-- 3 Risk Bucket Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="riskBucketCards"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-900">Distribusi OSL BJDPL per Bucket Umur (18 vs 19 Nov)</h3>
+            <p class="text-xs text-slate-500">Perbandingan posisi OSL dalam Juta Rupiah</p>
+          </div>
+          <div class="relative h-72">
+            <canvas id="agingCompareChart"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="mb-4">
+            <h3 class="text-sm font-bold text-slate-900">Penambahan DtD per Bucket Umur (Juta Rp)</h3>
+            <p class="text-xs text-slate-500">100% penambahan DtD terjadi di umur 1–45 Hari</p>
+          </div>
+          <div class="relative h-72">
+            <canvas id="agingDeltaChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aging Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900">Tabel Pergerakan DtD per Bucket Umur (6 Outlet CP Pamanukan)</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left tabular-nums" id="agingSummaryTable"></table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 text-center text-xs text-slate-400">
+    Dashboard Monitoring BJDPL CP Pamanukan &bull; Perbandingan DtD 18 Nov vs 19 Nov 2026 &bull; Siap Deploy GitHub Pages
+  </footer>
+
+<script>
+const RAW_DATA = {"meta": {"branch": "CP PAMANUKAN", "datePrev": "18 November 2026", "dateCurr": "19 November 2026", "dateMonthPrev": "31 Oktober 2026", "buckets": ["1 sd 15 Hari", "16 sd 30 Hari", "31 sd 45 Hari", "46 sd 60 Hari", "61 sd 75 Hari", "76 sd 90 Hari", "> 90 Hari"]}, "outlets": [{"name": "13309:CP PAMANUKAN", "products": [{"name": "GADAI FLEXI", "rek18": [6, 2, 2, 0, 0, 0, 0], "osl18": [35380000, 6450000, 14380000, 0, 0, 0, 0], "rek19": [6, 2, 2, 0, 0, 0, 0], "osl19": [35380000, 6450000, 14380000, 0, 0, 0, 0], "rekLalu": [3, 0, 0, 0, 0, 0, 0], "oslLalu": [15460000, 0, 0, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [35, 45, 28, 25, 8, 1, 0], "osl18": [297310000, 373030000, 308930000, 920250000, 68870000, 115000000, 0], "rek19": [36, 45, 29, 25, 8, 1, 0], "osl19": [300860000, 373030000, 373530000, 920250000, 68870000, 115000000, 0], "rekLalu": [39, 27, 21, 7, 0, 0, 0], "oslLalu": [1128050000, 948850000, 241230000, 149450000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [4, 13, 6, 1, 5, 1, 0], "osl18": [11180000, 20240000, 45340000, 2000000, 21270000, 800000, 0], "rek19": [4, 13, 6, 1, 5, 1, 0], "osl19": [11180000, 20240000, 45340000, 2000000, 21270000, 800000, 0], "rekLalu": [7, 1, 5, 6, 0, 0, 0], "oslLalu": [56030000, 2000000, 21270000, 33111700, 0, 0, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [0, 0, 0, 0, 1, 0, 0], "osl18": [0, 0, 0, 0, 4390604, 0, 0], "rek19": [0, 0, 0, 0, 1, 0, 0], "osl19": [0, 0, 0, 0, 4390604, 0, 0], "rekLalu": [0, 0, 1, 0, 0, 0, 0], "oslLalu": [0, 0, 4390604, 0, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 2, 0, 1, 2, 0, 0], "osl18": [3650041, 4570875, 0, 11319875, 6843350, 0, 0], "rek19": [1, 2, 0, 1, 2, 0, 0], "osl19": [3650041, 4570875, 0, 11319875, 6843350, 0, 0], "rekLalu": [1, 0, 2, 1, 0, 0, 0], "oslLalu": [1882750, 0, 13636125, 4527100, 0, 0, 0]}]}, {"name": "13311:UPC PUSAKA RATU", "products": [{"name": "GADAI FLEXI", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 3360000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 3360000, 0, 0, 0, 0], "rekLalu": [1, 0, 0, 1, 0, 0, 0], "oslLalu": [3360000, 0, 0, 3800000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [46, 23, 12, 19, 0, 0, 0], "osl18": [592580000, 163250000, 129450000, 270580000, 0, 0, 0], "rek19": [47, 24, 12, 19, 0, 0, 0], "osl19": [598320000, 175370000, 129450000, 270580000, 0, 0, 0], "rekLalu": [22, 25, 6, 13, 0, 0, 0], "oslLalu": [392770000, 402640000, 37170000, 137400000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [0, 2, 1, 0, 3, 0, 0], "osl18": [0, 11090000, 2240000, 0, 14790000, 0, 0], "rek19": [0, 2, 1, 0, 3, 0, 0], "osl19": [0, 11090000, 2240000, 0, 14790000, 0, 0], "rekLalu": [1, 0, 3, 1, 0, 0, 0], "oslLalu": [2240000, 0, 14790000, 510000, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [2181100, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [2181100, 0, 0, 0, 0, 0, 0], "rekLalu": [1, 0, 0, 0, 0, 0, 0], "oslLalu": [3643761, 0, 0, 0, 0, 0, 0]}]}, {"name": "13312:UPC PASAR WATES", "products": [{"name": "GADAI FLEXI", "rek18": [5, 7, 0, 1, 0, 0, 0], "osl18": [56890000, 84030000, 0, 4000000, 0, 0, 0], "rek19": [5, 7, 0, 1, 0, 0, 0], "osl19": [56890000, 84030000, 0, 4000000, 0, 0, 0], "rekLalu": [5, 1, 0, 0, 0, 0, 0], "oslLalu": [37770000, 4000000, 0, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [43, 23, 26, 19, 8, 0, 0], "osl18": [538770000, 292400000, 225660000, 349100000, 563170000, 0, 0], "rek19": [44, 25, 26, 19, 8, 0, 0], "osl19": [541180000, 387100000, 225660000, 349100000, 563170000, 0, 0], "rekLalu": [37, 22, 18, 13, 0, 0, 0], "oslLalu": [346680000, 367610000, 721830000, 178080000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [3, 0, 1, 4, 4, 0, 0], "osl18": [5490000, 0, 1470000, 3160000, 5480000, 0, 0], "rek19": [3, 0, 1, 4, 4, 0, 0], "osl19": [5490000, 0, 1470000, 3160000, 5480000, 0, 0], "rekLalu": [1, 4, 4, 2, 0, 0, 0], "oslLalu": [1470000, 3160000, 5480000, 1210000, 0, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 7000000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 7000000, 0, 0, 0, 0], "rekLalu": [1, 0, 0, 0, 0, 0, 0], "oslLalu": [7000000, 0, 0, 0, 0, 0, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [1, 0, 0, 1, 2, 0, 0], "osl18": [1741012, 0, 0, 2169200, 13552044, 0, 0], "rek19": [1, 0, 0, 1, 2, 0, 0], "osl19": [1741012, 0, 0, 2169200, 13552044, 0, 0], "rekLalu": [0, 0, 2, 1, 0, 0, 0], "oslLalu": [0, 0, 4255808, 11465436, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [2, 1, 0, 0, 0, 0, 0], "osl18": [10596946, 3141600, 0, 0, 0, 0, 0], "rek19": [1, 1, 0, 0, 0, 0, 0], "osl19": [3706000, 3141600, 0, 0, 0, 0, 0], "rekLalu": [1, 1, 0, 0, 0, 0, 0], "oslLalu": [2212550, 11005835, 0, 0, 0, 0, 0]}]}, {"name": "13313:UPC RANCASARI", "products": [{"name": "GADAI AGEN", "rek18": [30, 0, 3, 6, 2, 1, 0], "osl18": [779890000, 0, 19220000, 834440000, 422600000, 25100000, 0], "rek19": [30, 0, 3, 6, 2, 1, 0], "osl19": [779890000, 0, 19220000, 834440000, 422600000, 25100000, 0], "rekLalu": [5, 6, 5, 2, 0, 0, 0], "oslLalu": [27520000, 834440000, 882600000, 38300000, 0, 0, 0]}, {"name": "GADAI FLEXI", "rek18": [1, 1, 0, 1, 0, 0, 0], "osl18": [6160000, 5000000, 0, 600000, 0, 0, 0], "rek19": [1, 1, 0, 1, 0, 0, 0], "osl19": [6160000, 5000000, 0, 600000, 0, 0, 0], "rekLalu": [0, 2, 0, 0, 0, 0, 0], "oslLalu": [0, 2670000, 0, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [45, 34, 23, 20, 0, 0, 0], "osl18": [672170000, 515390000, 306360000, 148110000, 0, 0, 0], "rek19": [48, 36, 23, 20, 0, 0, 0], "osl19": [764670000, 629380000, 306360000, 148110000, 0, 0, 0], "rekLalu": [33, 25, 26, 16, 0, 0, 0], "oslLalu": [460250000, 190480000, 356820000, 186090000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 2, 0, 0, 0, 0, 0], "osl18": [1110000, 880000, 0, 0, 0, 0, 0], "rek19": [2, 2, 0, 0, 0, 0, 0], "osl19": [1110000, 880000, 0, 0, 0, 0, 0], "rekLalu": [7, 7, 3, 5, 0, 0, 0], "oslLalu": [53350000, 6050000, 2000000, 2560000, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [5, 1, 0, 0, 0, 0, 0], "osl18": [549177135, 4166157, 0, 0, 0, 0, 0], "rek19": [5, 1, 0, 0, 0, 0, 0], "osl19": [549177135, 4166157, 0, 0, 0, 0, 0], "rekLalu": [1, 0, 0, 0, 0, 0, 0], "oslLalu": [3686166, 0, 0, 0, 0, 0, 0]}]}, {"name": "13314:UPC CIASEM", "products": [{"name": "GADAI FLEXI", "rek18": [0, 1, 0, 1, 0, 0, 0], "osl18": [0, 1560000, 0, 1200000, 0, 0, 0], "rek19": [0, 1, 0, 1, 0, 0, 0], "osl19": [0, 1560000, 0, 1200000, 0, 0, 0], "rekLalu": [1, 1, 2, 0, 0, 0, 0], "oslLalu": [15200000, 1200000, 26200000, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [21, 15, 12, 6, 0, 0, 0], "osl18": [483150000, 153880000, 122990000, 626690000, 0, 0, 0], "rek19": [22, 15, 12, 6, 0, 0, 0], "osl19": [484270000, 153880000, 122990000, 626690000, 0, 0, 0], "rekLalu": [25, 8, 1, 1, 0, 0, 0], "oslLalu": [223730000, 646010000, 11720000, 9100000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 4, 5, 3, 2, 0, 0], "osl18": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0], "rek19": [2, 4, 5, 3, 2, 0, 0], "osl19": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0], "rekLalu": [6, 3, 2, 2, 0, 0, 0], "oslLalu": [3700000, 1110000, 2780000, 1300000, 0, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 1, 1, 0, 0, 0, 0], "osl18": [0, 48300000, 9166600, 0, 0, 0, 0], "rek19": [0, 1, 1, 0, 0, 0, 0], "osl19": [0, 48300000, 9166600, 0, 0, 0, 0], "rekLalu": [1, 1, 0, 1, 0, 0, 0], "oslLalu": [48300000, 9166600, 0, 11700000, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [3571910, 0, 0, 0, 0, 0, 0], "rek19": [2, 0, 0, 0, 0, 0, 0], "osl19": [17691432, 0, 0, 0, 0, 0, 0], "rekLalu": [0, 0, 3, 0, 0, 0, 0], "oslLalu": [0, 0, 80253386, 0, 0, 0, 0]}]}, {"name": "17457:BRI UNIT BOJONGKEDING", "products": [{"name": "GADAI FLEXI", "rek18": [2, 0, 0, 0, 0, 0, 0], "osl18": [2400000, 0, 0, 0, 0, 0, 0], "rek19": [2, 0, 0, 0, 0, 0, 0], "osl19": [2400000, 0, 0, 0, 0, 0, 0], "rekLalu": [0, 0, 0, 0, 0, 0, 0], "oslLalu": [0, 0, 0, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [4, 2, 1, 2, 2, 0, 0], "osl18": [67950000, 14050000, 10880000, 21250000, 13960000, 0, 0], "rek19": [4, 2, 1, 2, 2, 0, 0], "osl19": [67950000, 14050000, 10880000, 21250000, 13960000, 0, 0], "rekLalu": [4, 2, 3, 3, 0, 0, 0], "oslLalu": [31560000, 21250000, 19180000, 18820000, 0, 0, 0]}]}]};
+
+// State
+let numFormat = 'short'; // 'short' or 'full'
+let matrixMode = 'curr'; // 'curr', 'prev', 'delta'
+let outletChartMetric = 'osl'; // 'osl' or 'rek'
+let selectedOutletName = RAW_DATA.outlets[3].name; // Default highlight: UPC RANCASARI (highest addition)
+let charts = {};
+
+// Formatting helpers
+const sumArr = arr => arr.reduce((a, b) => a + b, 0);
+
+function fmtInt(n) {
+  return Math.round(n).toLocaleString('id-ID');
+}
+
+function fmtRpFull(n, showSign = false) {
+  const sign = showSign ? (n > 0 ? '+' : n < 0 ? '-' : '') : (n < 0 ? '-' : '');
+  return sign + 'Rp ' + Math.abs(Math.round(n)).toLocaleString('id-ID');
+}
+
+function fmtRpShort(n, showSign = false) {
+  const abs = Math.abs(n);
+  const sign = showSign ? (n > 0 ? '+' : n < 0 ? '-' : '') : (n < 0 ? '-' : '');
+  if (abs === 0) return showSign ? '0' : '-';
+  if (abs >= 1e9) return sign + 'Rp ' + (abs / 1e9).toFixed(2).replace('.', ',') + ' M';
+  if (abs >= 1e6) return sign + 'Rp ' + (abs / 1e6).toFixed(2).replace('.', ',') + ' Jt';
+  if (abs >= 1e3) return sign + 'Rp ' + (abs / 1e3).toFixed(0) + ' Rb';
+  return sign + 'Rp ' + abs.toLocaleString('id-ID');
+}
+
+function fmtCellOsl(n, isDelta = false) {
+  if (n === 0) return isDelta ? '-' : '-';
+  if (numFormat === 'full') {
+    const sign = isDelta && n > 0 ? '+' : n < 0 ? '-' : '';
+    return sign + Math.abs(Math.round(n)).toLocaleString('id-ID');
+  }
+  const abs = Math.abs(n);
+  const sign = isDelta && n > 0 ? '+' : n < 0 ? '-' : '';
+  if (abs >= 1e9) return sign + (abs / 1e9).toFixed(2).replace('.', ',') + ' M';
+  if (abs >= 1e6) return sign + (abs / 1e6).toFixed(1).replace('.', ',') + ' Jt';
+  return sign + (abs / 1e3).toFixed(0) + ' Rb';
+}
+
+function fmtRp(n, showSign = false) {
+  return numFormat === 'full' ? fmtRpFull(n, showSign) : fmtRpShort(n, showSign);
+}
+
+function fmtPct(delta, base) {
+  if (!base) return delta === 0 ? '0,00%' : '+100%';
+  const pct = (delta / base) * 100;
+  const sign = pct > 0 ? '+' : '';
+  return sign + pct.toFixed(2).replace('.', ',') + '%';
+}
+
+function shortOutletLabel(name) {
+  return name.replace(/^\d+:/, '').replace('BRI UNIT ', 'BRI ');
+}
+
+// Precompute aggregations
+function computeAggregations() {
+  const buckets = RAW_DATA.meta.buckets;
+  let totRek18 = 0, totRek19 = 0, totOsl18 = 0, totOsl19 = 0;
+  const bucketTotals = buckets.map(b => ({ label: b, rek18: 0, rek19: 0, osl18: 0, osl19: 0 }));
+  const productMap = {};
+  const outletSummaries = [];
+  const movements = [];
+
+  RAW_DATA.outlets.forEach(o => {
+    let oRek18 = 0, oRek19 = 0, oOsl18 = 0, oOsl19 = 0;
+    const oBucketRek18 = Array(7).fill(0), oBucketRek19 = Array(7).fill(0);
+    const oBucketOsl18 = Array(7).fill(0), oBucketOsl19 = Array(7).fill(0);
+
+    o.products.forEach(p => {
+      const pR18 = sumArr(p.rek18), pR19 = sumArr(p.rek19);
+      const pO18 = sumArr(p.osl18), pO19 = sumArr(p.osl19);
+      oRek18 += pR18; oRek19 += pR19;
+      oOsl18 += pO18; oOsl19 += pO19;
+
+      if (!productMap[p.name]) {
+        productMap[p.name] = { name: p.name, rek18: 0, rek19: 0, osl18: 0, osl19: 0, outletsChanged: [] };
+      }
+      productMap[p.name].rek18 += pR18;
+      productMap[p.name].rek19 += pR19;
+      productMap[p.name].osl18 += pO18;
+      productMap[p.name].osl19 += pO19;
+      if (pO19 !== pO18 || pR19 !== pR18) {
+        productMap[p.name].outletsChanged.push({
+          outlet: o.name,
+          dRek: pR19 - pR18,
+          dOsl: pO19 - pO18
+        });
+      }
+
+      for (let i = 0; i < 7; i++) {
+        oBucketRek18[i] += p.rek18[i]; oBucketRek19[i] += p.rek19[i];
+        oBucketOsl18[i] += p.osl18[i]; oBucketOsl19[i] += p.osl19[i];
+        bucketTotals[i].rek18 += p.rek18[i]; bucketTotals[i].rek19 += p.rek19[i];
+        bucketTotals[i].osl18 += p.osl18[i]; bucketTotals[i].osl19 += p.osl19[i];
+
+        const dr = p.rek19[i] - p.rek18[i];
+        const dn = p.osl19[i] - p.osl18[i];
+        if (dr !== 0 || dn !== 0) {
+          movements.push({
+            outlet: o.name,
+            product: p.name,
+            bucket: buckets[i],
+            rek18: p.rek18[i],
+            rek19: p.rek19[i],
+            dRek: dr,
+            osl18: p.osl18[i],
+            osl19: p.osl19[i],
+            dOsl: dn
+          });
+        }
+      }
+    });
+
+    totRek18 += oRek18; totRek19 += oRek19;
+    totOsl18 += oOsl18; totOsl19 += oOsl19;
+    outletSummaries.push({
+      name: o.name,
+      shortName: shortOutletLabel(o.name),
+      rek18: oRek18, rek19: oRek19, dRek: oRek19 - oRek18,
+      osl18: oOsl18, osl19: oOsl19, dOsl: oOsl19 - oOsl18,
+      bRek18: oBucketRek18, bRek19: oBucketRek19,
+      bOsl18: oBucketOsl18, bOsl19: oBucketOsl19,
+      products: o.products
+    });
+  });
+
+  const productSummaries = Object.values(productMap).map(p => ({
+    ...p,
+    dRek: p.rek19 - p.rek18,
+    dOsl: p.osl19 - p.osl18
+  })).sort((a, b) => b.osl19 - a.osl19);
+
+  movements.sort((a, b) => Math.abs(b.dOsl) - Math.abs(a.dOsl));
+
+  return {
+    totRek18, totRek19, dRek: totRek19 - totRek18,
+    totOsl18, totOsl19, dOsl: totOsl19 - totOsl18,
+    bucketTotals,
+    outletSummaries,
+    productSummaries,
+    movements
+  };
+}
+
+const AGG = computeAggregations();
+
+const ICONS = {
+  wallet: '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M16 12h5v4h-5a2 2 0 0 1 0-4z"/></svg>',
+  'file-spreadsheet': '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8M8 17h8M10 9H8"/></svg>',
+  'alert-triangle': '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  layers: '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>'
+};
+
+// Render KPI Cards
+function renderKPIs() {
+  const topOutlet = [...AGG.outletSummaries].sort((a, b) => b.dOsl - a.dOsl)[0];
+  const topProduct = [...AGG.productSummaries].sort((a, b) => b.dOsl - a.dOsl)[0];
+  const outletShare = ((topOutlet.dOsl / AGG.dOsl) * 100).toFixed(1).replace('.', ',');
+  const prodShare = ((topProduct.dOsl / AGG.dOsl) * 100).toFixed(1).replace('.', ',');
+
+  const cards = [
+    {
+      label: 'TOTAL OSL BJDPL (19 NOV)',
+      value: fmtRp(AGG.totOsl19),
+      badge: fmtPct(AGG.dOsl, AGG.totOsl18),
+      badgeCls: 'bg-rose-100 text-rose-700',
+      sub: `Selisih DtD: <strong class="text-rose-700">${fmtRp(AGG.dOsl, true)}</strong>`,
+      sub2: `Posisi 18 Nov: ${fmtRp(AGG.totOsl18)}`,
+      icon: 'wallet',
+      iconCls: 'bg-emerald-50 text-emerald-700',
+      titleAttr: `Exact 19 Nov: ${fmtRpFull(AGG.totOsl19)} | 18 Nov: ${fmtRpFull(AGG.totOsl18)}`
+    },
+    {
+      label: 'TOTAL REKENING (19 NOV)',
+      value: `${fmtInt(AGG.totRek19)} Rek`,
+      badge: fmtPct(AGG.dRek, AGG.totRek18),
+      badgeCls: 'bg-rose-100 text-rose-700',
+      sub: `Selisih DtD: <strong class="text-rose-700">+${AGG.dRek} Rekening</strong>`,
+      sub2: `Posisi 18 Nov: ${fmtInt(AGG.totRek18)} Rek`,
+      icon: 'file-spreadsheet',
+      iconCls: 'bg-sky-50 text-sky-700',
+      titleAttr: `714 Rek -> 727 Rek (+13 Rek)`
+    },
+    {
+      label: 'PENAMBAHAN OUTLET TERTINGGI',
+      value: topOutlet.shortName,
+      badge: `${outletShare}% Share`,
+      badgeCls: 'bg-amber-100 text-amber-800',
+      sub: `Naik <strong class="text-rose-700">${fmtRp(topOutlet.dOsl, true)} (${fmtPct(topOutlet.dOsl, topOutlet.osl18)})</strong>`,
+      sub2: `Rekening: +${topOutlet.dRek} Rek (${topOutlet.rek18} &rarr; ${topOutlet.rek19})`,
+      icon: 'alert-triangle',
+      iconCls: 'bg-rose-50 text-rose-600',
+      titleAttr: `Exact delta: ${fmtRpFull(topOutlet.dOsl, true)}`
+    },
+    {
+      label: 'PENAMBAHAN PRODUK TERTINGGI',
+      value: topProduct.name,
+      badge: `${prodShare}% Share`,
+      badgeCls: 'bg-rose-100 text-rose-700',
+      sub: `Naik <strong class="text-rose-700">${fmtRp(topProduct.dOsl, true)} (${fmtPct(topProduct.dOsl, topProduct.osl18)})</strong>`,
+      sub2: `Rekening: +${topProduct.dRek} Rek (${topProduct.rek18} &rarr; ${topProduct.rek19})`,
+      icon: 'layers',
+      iconCls: 'bg-amber-50 text-amber-700',
+      titleAttr: `Exact delta: ${fmtRpFull(topProduct.dOsl, true)}`
+    }
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = cards.map(c => `
+    <div title="${c.titleAttr}" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 hover:shadow-md transition">
+      <div class="flex items-start justify-between gap-2">
+        <span class="text-[11px] font-bold tracking-wider uppercase text-slate-500">${c.label}</span>
+        <div class="w-8 h-8 rounded-lg ${c.iconCls} flex items-center justify-center shrink-0">
+          ${ICONS[c.icon] || ""}
+        </div>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2 flex-wrap">
+        <span class="text-xl sm:text-2xl font-extrabold text-slate-900 tabular-nums">${c.value}</span>
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${c.badgeCls}">${c.badge}</span>
+      </div>
+      <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 space-y-0.5">
+        <div>${c.sub}</div>
+        <div class="text-[11px] text-slate-400">${c.sub2}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render Tab 1: Matrix Table (Exact Template Replica)
+function populateOutletFilter() {
+  const sel = document.getElementById('matrixOutletFilter');
+  AGG.outletSummaries.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.name;
+    opt.textContent = o.name;
+    sel.appendChild(opt);
+  });
+}
+
+function renderMatrix() {
+  const filterVal = document.getElementById('matrixOutletFilter').value;
+  const highlight = document.getElementById('highlightDeltaToggle').checked;
+  const buckets = RAW_DATA.meta.buckets;
+  const banner = document.getElementById('matrixBannerTitle');
+
+  if (matrixMode === 'curr') banner.textContent = 'KINERJA BJDPL CP PAMANUKAN - 19 NOVEMBER 2026 (POSISI TERKINI)';
+  else if (matrixMode === 'prev') banner.textContent = 'KINERJA BJDPL CP PAMANUKAN - 18 NOVEMBER 2026 (BASELINE)';
+  else banner.textContent = 'SELISIH DtD BJDPL CP PAMANUKAN (19 NOV vs 18 NOV 2026)';
+
+  const filteredOutlets = filterVal === 'ALL'
+    ? AGG.outletSummaries
+    : AGG.outletSummaries.filter(o => o.name === filterVal);
+
+  let html = `
+    <thead>
+      <tr>
+        <th rowspan="2" class="template-th sticky-header px-3 py-2.5 text-left font-bold min-w-[215px]">OUTLET / PRODUK</th>
+        ${buckets.map(b => `<th colspan="2" class="template-th px-2 py-1.5 text-center font-bold">${b}</th>`).join('')}
+        <th colspan="2" class="template-th px-2 py-1.5 text-center font-bold bg-[#007a33]">Grand Total</th>
+      </tr>
+      <tr>
+        ${buckets.map(() => `<th class="template-th px-2 py-1 text-center font-semibold text-[11px]">REK</th><th class="template-th px-2 py-1 text-center font-semibold text-[11px]">OSL</th>`).join('')}
+        <th class="template-th px-2 py-1 text-center font-semibold text-[11px] bg-[#007a33]">REK</th>
+        <th class="template-th px-2 py-1 text-center font-semibold text-[11px] bg-[#007a33]">OSL</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
+
+  let gtR18 = Array(7).fill(0), gtR19 = Array(7).fill(0);
+  let gtO18 = Array(7).fill(0), gtO19 = Array(7).fill(0);
+
+  function renderPairCells(r18, r19, o18, o19, isSubtotal = false) {
+    const dr = r19 - r18;
+    const dn = o19 - o18;
+    let rVal, oVal;
+    const isDelta = matrixMode === 'delta';
+    if (matrixMode === 'curr') { rVal = r19; oVal = o19; }
+    else if (matrixMode === 'prev') { rVal = r18; oVal = o18; }
+    else { rVal = dr; oVal = dn; }
+
+    let rCls = '', oCls = '';
+    if (highlight && (matrixMode === 'curr' || matrixMode === 'delta')) {
+      if (dr > 0) rCls = 'cell-highlight-up';
+      else if (dr < 0) rCls = 'cell-highlight-down';
+      if (dn > 0) oCls = 'cell-highlight-up';
+      else if (dn < 0) oCls = 'cell-highlight-down';
+    }
+
+    const rText = rVal === 0 ? '-' : (isDelta && rVal > 0 ? '+' + fmtInt(rVal) : fmtInt(rVal));
+    const oText = fmtCellOsl(oVal, isDelta);
+    const tip = `18 Nov: ${fmtInt(r18)} Rek / ${fmtRpFull(o18)} | 19 Nov: ${fmtInt(r19)} Rek / ${fmtRpFull(o19)} | DtD: ${dr >= 0 ? '+' : ''}${dr} Rek / ${fmtRpFull(dn, true)}`;
+
+    return `
+      <td title="${tip}" class="px-2 py-1.5 text-right ${rCls} ${isSubtotal ? 'font-bold' : ''}">${rText}</td>
+      <td title="${tip}" class="px-2 py-1.5 text-right ${oCls} ${isSubtotal ? 'font-bold' : ''}">${oText}</td>
+    `;
+  }
+
+  filteredOutlets.forEach(o => {
+    for (let i = 0; i < 7; i++) {
+      gtR18[i] += o.bRek18[i]; gtR19[i] += o.bRek19[i];
+      gtO18[i] += o.bOsl18[i]; gtO19[i] += o.bOsl19[i];
+    }
+
+    // Outlet subtotal row
+    html += `<tr class="template-outlet-row">`;
+    html += `<td class="sticky-col bg-[#e6efe0] px-3 py-2 text-left font-bold">${o.name}</td>`;
+    for (let i = 0; i < 7; i++) {
+      html += renderPairCells(o.bRek18[i], o.bRek19[i], o.bOsl18[i], o.bOsl19[i], true);
+    }
+    html += renderPairCells(o.rek18, o.rek19, o.osl18, o.osl19, true);
+    html += `</tr>`;
+
+    // Product rows under outlet
+    o.products.forEach(p => {
+      const pR18 = sumArr(p.rek18), pR19 = sumArr(p.rek19);
+      const pO18 = sumArr(p.osl18), pO19 = sumArr(p.osl19);
+      html += `<tr class="bg-white hover:bg-slate-50 transition">`;
+      html += `<td class="sticky-col bg-white px-3 py-1.5 pl-6 text-left text-slate-700 font-medium">${p.name}</td>`;
+      for (let i = 0; i < 7; i++) {
+        html += renderPairCells(p.rek18[i], p.rek19[i], p.osl18[i], p.osl19[i], false);
+      }
+      html += renderPairCells(pR18, pR19, pO18, pO19, true);
+      html += `</tr>`;
+    });
+  });
+
+  // Grand Total row
+  const gtTotR18 = sumArr(gtR18), gtTotR19 = sumArr(gtR19);
+  const gtTotO18 = sumArr(gtO18), gtTotO19 = sumArr(gtO19);
+  const isDelta = matrixMode === 'delta';
+
+  html += `<tr class="template-total-row">`;
+  html += `<td class="sticky-col bg-[#009944] px-3 py-2.5 text-left font-extrabold uppercase">Grand Total</td>`;
+  for (let i = 0; i < 7; i++) {
+    const rV = matrixMode === 'curr' ? gtR19[i] : matrixMode === 'prev' ? gtR18[i] : (gtR19[i] - gtR18[i]);
+    const oV = matrixMode === 'curr' ? gtO19[i] : matrixMode === 'prev' ? gtO18[i] : (gtO19[i] - gtO18[i]);
+    html += `<td class="px-2 py-2.5 text-right">${rV === 0 ? '-' : (isDelta && rV > 0 ? '+' + fmtInt(rV) : fmtInt(rV))}</td>`;
+    html += `<td class="px-2 py-2.5 text-right">${fmtCellOsl(oV, isDelta)}</td>`;
+  }
+  const gtRV = matrixMode === 'curr' ? gtTotR19 : matrixMode === 'prev' ? gtTotR18 : (gtTotR19 - gtTotR18);
+  const gtOV = matrixMode === 'curr' ? gtTotO19 : matrixMode === 'prev' ? gtTotO18 : (gtTotO19 - gtTotO18);
+  html += `<td class="px-2 py-2.5 text-right bg-[#007a33]">${isDelta && gtRV > 0 ? '+' + fmtInt(gtRV) : fmtInt(gtRV)}</td>`;
+  html += `<td class="px-2 py-2.5 text-right bg-[#007a33]">${fmtCellOsl(gtOV, isDelta)}</td>`;
+  html += `</tr></tbody>`;
+
+  document.getElementById('matrixTable').innerHTML = html;
+}
+
+// Render Tab 2: Analisa Per Outlet
+function renderOutletTab() {
+  // Table
+  const sorted = [...AGG.outletSummaries].sort((a, b) => b.dOsl - a.dOsl);
+  let html = `
+    <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 font-bold">Outlet</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 18 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 19 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih DtD (Rp)</th>
+        <th class="px-3 py-3 text-right font-bold">% DtD</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 18</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 19</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih Rek</th>
+        <th class="px-3 py-3 text-right font-bold">Share Penambahan</th>
+        <th class="px-4 py-3 text-center font-bold">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+  `;
+
+  sorted.forEach(o => {
+    const isSel = o.name === selectedOutletName;
+    const share = AGG.dOsl ? ((o.dOsl / AGG.dOsl) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+    const statusBadge = o.dOsl > 0
+      ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">Meningkat</span>`
+      : o.dOsl < 0
+      ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700">Membaik</span>`
+      : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">Stabil</span>`;
+
+    html += `
+      <tr onclick="selectOutlet('${o.name}')" class="cursor-pointer transition ${isSel ? 'bg-emerald-50/80' : 'hover:bg-slate-50'}">
+        <td class="px-4 py-3 font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full ${isSel ? 'bg-emerald-600' : 'bg-slate-300'}"></span>
+          ${o.name}
+        </td>
+        <td class="px-3 py-3 text-right text-slate-600">${fmtRp(o.osl18)}</td>
+        <td class="px-3 py-3 text-right font-semibold text-slate-900">${fmtRp(o.osl19)}</td>
+        <td class="px-3 py-3 text-right font-bold ${o.dOsl > 0 ? 'text-rose-700' : o.dOsl < 0 ? 'text-emerald-700' : 'text-slate-500'}">${o.dOsl === 0 ? 'Rp 0' : fmtRp(o.dOsl, true)}</td>
+        <td class="px-3 py-3 text-right font-semibold ${o.dOsl > 0 ? 'text-rose-600' : 'text-slate-500'}">${fmtPct(o.dOsl, o.osl18)}</td>
+        <td class="px-3 py-3 text-right text-slate-600">${fmtInt(o.rek18)}</td>
+        <td class="px-3 py-3 text-right font-semibold text-slate-900">${fmtInt(o.rek19)}</td>
+        <td class="px-3 py-3 text-right font-bold ${o.dRek > 0 ? 'text-rose-700' : 'text-slate-500'}">${o.dRek > 0 ? '+' + o.dRek : o.dRek}</td>
+        <td class="px-3 py-3 text-right font-semibold text-slate-700">${share}</td>
+        <td class="px-4 py-3 text-center">${statusBadge}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      <tr class="bg-emerald-800 text-white font-bold">
+        <td class="px-4 py-3 uppercase">TOTAL KONSOLIDASI (6 OUTLET)</td>
+        <td class="px-3 py-3 text-right">${fmtRp(AGG.totOsl18)}</td>
+        <td class="px-3 py-3 text-right">${fmtRp(AGG.totOsl19)}</td>
+        <td class="px-3 py-3 text-right">${fmtRp(AGG.dOsl, true)}</td>
+        <td class="px-3 py-3 text-right">${fmtPct(AGG.dOsl, AGG.totOsl18)}</td>
+        <td class="px-3 py-3 text-right">${fmtInt(AGG.totRek18)}</td>
+        <td class="px-3 py-3 text-right">${fmtInt(AGG.totRek19)}</td>
+        <td class="px-3 py-3 text-right">+${AGG.dRek}</td>
+        <td class="px-3 py-3 text-right">100,0%</td>
+        <td class="px-4 py-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[11px] bg-rose-500 text-white">Naik DtD</span></td>
+      </tr>
+    </tbody>
+  `;
+  document.getElementById('outletSummaryTable').innerHTML = html;
+  renderOutletDrilldown();
+  renderOutletCharts();
+}
+
+function selectOutlet(name) {
+  selectedOutletName = name;
+  renderOutletTab();
+}
+
+function renderOutletDrilldown() {
+  const o = AGG.outletSummaries.find(x => x.name === selectedOutletName) || AGG.outletSummaries[0];
+  const oMoves = AGG.movements.filter(m => m.outlet === o.name);
+
+  let moveHtml = oMoves.length === 0
+    ? `<div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium">Tidak ada penambahan maupun penurunan BJDPL pada outlet ini antara 18 Nov dan 19 Nov 2026 (Stabil di ${o.rek19} Rek / ${fmtRpFull(o.osl19)}).</div>`
+    : `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        ${oMoves.map(m => `
+          <div class="p-3.5 rounded-xl border ${m.dOsl > 0 ? 'bg-rose-50/70 border-rose-200' : 'bg-emerald-50/70 border-emerald-200'}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-900">${m.product}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white border border-slate-200 text-slate-700">${m.bucket}</span>
+            </div>
+            <div class="mt-2 flex items-baseline justify-between">
+              <span class="text-base font-extrabold ${m.dOsl > 0 ? 'text-rose-700' : 'text-emerald-700'}">${fmtRpFull(m.dOsl, true)}</span>
+              <span class="text-xs font-bold ${m.dRek > 0 ? 'text-rose-600' : 'text-emerald-600'}">${m.dRek > 0 ? '+' : ''}${m.dRek} Rek</span>
+            </div>
+            <div class="mt-1 text-[11px] text-slate-500">
+              18 Nov: ${m.rek18} Rek (${fmtRpShort(m.osl18)}) &rarr; 19 Nov: ${m.rek19} Rek (${fmtRpShort(m.osl19)})
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+
+  document.getElementById('outletDrilldownBox').innerHTML = `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Detail Pemicu Perubahan DtD</span>
+        <h4 class="text-base font-extrabold text-slate-900">${o.name}</h4>
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs">
+        <span class="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold">18 Nov: ${fmtRpFull(o.osl18)} (${o.rek18} Rek)</span>
+        <span class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-bold">19 Nov: ${fmtRpFull(o.osl19)} (${o.rek19} Rek)</span>
+        <span class="px-3 py-1 rounded-lg ${o.dOsl > 0 ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-700'} font-bold">DtD: ${fmtRpFull(o.dOsl, true)} (${o.dRek >= 0 ? '+' : ''}${o.dRek} Rek)</span>
+      </div>
+    </div>
+    ${moveHtml}
+  `;
+}
+
+function renderOutletCharts() {
+  const labels = AGG.outletSummaries.map(o => o.shortName);
+  const d18 = outletChartMetric === 'osl'
+    ? AGG.outletSummaries.map(o => +(o.osl18 / 1e6).toFixed(2))
+    : AGG.outletSummaries.map(o => o.rek18);
+  const d19 = outletChartMetric === 'osl'
+    ? AGG.outletSummaries.map(o => +(o.osl19 / 1e6).toFixed(2))
+    : AGG.outletSummaries.map(o => o.rek19);
+
+  if (charts.outletCompare) charts.outletCompare.destroy();
+  charts.outletCompare = new Chart(document.getElementById('outletCompareChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: '18 Nov 2026', data: d18, backgroundColor: '#94a3b8', borderRadius: 6 },
+        { label: '19 Nov 2026', data: d19, backgroundColor: '#009944', borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => outletChartMetric === 'osl'
+              ? `${ctx.dataset.label}: Rp ${ctx.parsed.y.toLocaleString('id-ID')} Jt`
+              : `${ctx.dataset.label}: ${ctx.parsed.y} Rek`
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
+      }
+    }
+  });
+
+  const sortedDelta = [...AGG.outletSummaries].sort((a, b) => b.dOsl - a.dOsl);
+  if (charts.outletDelta) charts.outletDelta.destroy();
+  charts.outletDelta = new Chart(document.getElementById('outletDeltaChart'), {
+    type: 'bar',
+    data: {
+      labels: sortedDelta.map(o => o.shortName),
+      datasets: [{
+        label: 'Penambahan DtD (Juta Rp)',
+        data: sortedDelta.map(o => +(o.dOsl / 1e6).toFixed(2)),
+        backgroundColor: sortedDelta.map(o => o.dOsl > 0 ? '#e11d48' : '#94a3b8'),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `+Rp ${ctx.parsed.x.toLocaleString('id-ID')} Jt`
+          }
+        }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }
+      }
+    }
+  });
+}
+
+// Render Tab 3: Analisa Per Produk
+function renderProductTab() {
+  let html = `
+    <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 font-bold">Produk</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 18 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 19 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih DtD (Rp)</th>
+        <th class="px-3 py-3 text-right font-bold">% DtD</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 18</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 19</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih Rek</th>
+        <th class="px-3 py-3 text-right font-bold">Porsi OSL</th>
+        <th class="px-4 py-3 text-left font-bold">Outlet Pemicu</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+  `;
+
+  AGG.productSummaries.forEach(p => {
+    const shareOsl = ((p.osl19 / AGG.totOsl19) * 100).toFixed(1).replace('.', ',') + '%';
+    const drivers = p.outletsChanged.length === 0
+      ? `<span class="text-slate-400">Tidak ada perubahan DtD</span>`
+      : p.outletsChanged.map(d =>
+          `<span class="inline-block mr-1.5 mb-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${d.dOsl > 0 ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">${shortOutletLabel(d.outlet)} (${fmtRpShort(d.dOsl, true)})</span>`
+        ).join('');
+
+    html += `
+      <tr class="hover:bg-slate-50">
+        <td class="px-4 py-3 font-bold text-slate-900">${p.name}</td>
+        <td class="px-3 py-3 text-right text-slate-600">${fmtRp(p.osl18)}</td>
+        <td class="px-3 py-3 text-right font-semibold text-slate-900">${fmtRp(p.osl19)}</td>
+        <td class="px-3 py-3 text-right font-bold ${p.dOsl > 0 ? 'text-rose-700' : 'text-slate-500'}">${p.dOsl === 0 ? 'Rp 0' : fmtRp(p.dOsl, true)}</td>
+        <td class="px-3 py-3 text-right font-semibold ${p.dOsl > 0 ? 'text-rose-600' : 'text-slate-500'}">${fmtPct(p.dOsl, p.osl18)}</td>
+        <td class="px-3 py-3 text-right text-slate-600">${fmtInt(p.rek18)}</td>
+        <td class="px-3 py-3 text-right font-semibold text-slate-900">${fmtInt(p.rek19)}</td>
+        <td class="px-3 py-3 text-right font-bold ${p.dRek > 0 ? 'text-rose-700' : 'text-slate-500'}">${p.dRek > 0 ? '+' + p.dRek : p.dRek}</td>
+        <td class="px-3 py-3 text-right font-medium text-slate-700">${shareOsl}</td>
+        <td class="px-4 py-3 max-w-xs whitespace-normal">${drivers}</td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody>`;
+  document.getElementById('productSummaryTable').innerHTML = html;
+
+  renderMovementTable();
+  renderProductCharts();
+}
+
+function renderMovementTable() {
+  const prodFilter = document.getElementById('moveProductFilter').value;
+  const rows = prodFilter === 'ALL' ? AGG.movements : AGG.movements.filter(m => m.product === prodFilter);
+
+  let html = `
+    <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 font-bold">Outlet</th>
+        <th class="px-3 py-3 font-bold">Produk</th>
+        <th class="px-3 py-3 font-bold">Bucket Umur</th>
+        <th class="px-3 py-3 text-right font-bold">Rek (18 &rarr; 19)</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih Rek</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 18 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 19 Nov</th>
+        <th class="px-4 py-3 text-right font-bold">Selisih DtD (Rp)</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      ${rows.map(m => `
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-2.5 font-semibold text-slate-900">${m.outlet}</td>
+          <td class="px-3 py-2.5 font-medium text-slate-700">${m.product}</td>
+          <td class="px-3 py-2.5"><span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-[11px]">${m.bucket}</span></td>
+          <td class="px-3 py-2.5 text-right text-slate-600">${m.rek18} &rarr; <strong>${m.rek19}</strong></td>
+          <td class="px-3 py-2.5 text-right font-bold ${m.dRek > 0 ? 'text-rose-700' : 'text-emerald-700'}">${m.dRek > 0 ? '+' + m.dRek : m.dRek}</td>
+          <td class="px-3 py-2.5 text-right text-slate-600">${fmtRp(m.osl18)}</td>
+          <td class="px-3 py-2.5 text-right font-semibold text-slate-900">${fmtRp(m.osl19)}</td>
+          <td class="px-4 py-2.5 text-right font-bold ${m.dOsl > 0 ? 'text-rose-700' : 'text-emerald-700'}">${fmtRp(m.dOsl, true)}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+  `;
+  document.getElementById('movementAuditTable').innerHTML = html;
+}
+
+function renderProductCharts() {
+  const palette = ['#009944', '#0ea5e9', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#64748b'];
+  if (charts.productDonut) charts.productDonut.destroy();
+  charts.productDonut = new Chart(document.getElementById('productDonutChart'), {
+    type: 'doughnut',
+    data: {
+      labels: AGG.productSummaries.map(p => p.name),
+      datasets: [{
+        data: AGG.productSummaries.map(p => +(p.osl19 / 1e6).toFixed(2)),
+        backgroundColor: palette,
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 11, font: { size: 10, weight: '600' } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.label}: Rp ${ctx.parsed.toLocaleString('id-ID')} Jt (${((ctx.parsed / (AGG.totOsl19 / 1e6)) * 100).toFixed(1)}%)`
+          }
+        }
+      }
+    }
+  });
+
+  if (charts.productDelta) charts.productDelta.destroy();
+  charts.productDelta = new Chart(document.getElementById('productDeltaChart'), {
+    type: 'bar',
+    data: {
+      labels: AGG.productSummaries.map(p => p.name),
+      datasets: [{
+        label: 'Penambahan DtD (Juta Rp)',
+        data: AGG.productSummaries.map(p => +(p.dOsl / 1e6).toFixed(2)),
+        backgroundColor: AGG.productSummaries.map(p => p.dOsl > 0 ? '#e11d48' : '#cbd5e1'),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.x >= 0 ? '+' : ''}Rp ${ctx.parsed.x.toLocaleString('id-ID')} Jt`
+          }
+        }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
+      }
+    }
+  });
+}
+
+// Render Tab 4: Aging & Risiko
+function renderAgingTab() {
+  const b = AGG.bucketTotals;
+  const earlyOsl19 = b[0].osl19 + b[1].osl19;
+  const earlyDelta = (b[0].osl19 - b[0].osl18) + (b[1].osl19 - b[1].osl18);
+  const earlyRek19 = b[0].rek19 + b[1].rek19;
+  const earlyRekD = (b[0].rek19 - b[0].rek18) + (b[1].rek19 - b[1].rek18);
+
+  const midOsl19 = b[2].osl19;
+  const midDelta = b[2].osl19 - b[2].osl18;
+  const midRek19 = b[2].rek19;
+  const midRekD = b[2].rek19 - b[2].rek18;
+
+  const highOsl19 = b[3].osl19 + b[4].osl19 + b[5].osl19 + b[6].osl19;
+  const highDelta = (b[3].osl19 - b[3].osl18) + (b[4].osl19 - b[4].osl18) + (b[5].osl19 - b[5].osl18) + (b[6].osl19 - b[6].osl18);
+  const highRek19 = b[3].rek19 + b[4].rek19 + b[5].rek19 + b[6].rek19;
+
+  document.getElementById('riskBucketCards').innerHTML = `
+    <div class="bg-white rounded-2xl border border-amber-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase text-amber-700">Bucket Dini (1 sd 30 Hari)</span>
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">+${earlyRekD} Rek DtD</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold text-slate-900">${fmtRp(earlyOsl19)}</div>
+      <div class="mt-1 text-xs text-slate-600">${earlyRek19} Rek (${((earlyOsl19 / AGG.totOsl19) * 100).toFixed(1).replace('.', ',')}% total) &bull; DtD <strong class="text-rose-700">${fmtRp(earlyDelta, true)}</strong></div>
+      <p class="mt-2 text-[11px] text-slate-500">Fokus reminder WA &amp; telepon harian agar nasabah segera memperpanjang/melunasi sebelum masuk bucket 31+ hari.</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-orange-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase text-orange-700">Bucket Menengah (31 sd 45 Hari)</span>
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">+${midRekD} Rek DtD</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold text-slate-900">${fmtRp(midOsl19)}</div>
+      <div class="mt-1 text-xs text-slate-600">${midRek19} Rek (${((midOsl19 / AGG.totOsl19) * 100).toFixed(1).replace('.', ',')}% total) &bull; DtD <strong class="text-rose-700">${fmtRp(midDelta, true)}</strong></div>
+      <p class="mt-2 text-[11px] text-slate-500">Kenaikan berasal dari 1 rekening Gadai KCA bernilai besar (+Rp 64,60 Jt) di CP Pamanukan.</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-rose-200 p-4 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase text-rose-700">Risiko Tinggi (&gt; 45 Hari)</span>
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700">Stabil DtD (0)</span>
+      </div>
+      <div class="mt-2 text-2xl font-extrabold text-slate-900">${fmtRp(highOsl19)}</div>
+      <div class="mt-1 text-xs text-slate-600">${highRek19} Rek (${((highOsl19 / AGG.totOsl19) * 100).toFixed(1).replace('.', ',')}% total) &bull; &gt; 90 Hari: <strong class="text-emerald-700">0 Rek (Rp 0)</strong></div>
+      <p class="mt-2 text-[11px] text-slate-500">Stok eksisting Rp 4,47 M (46–90 Hari) wajib jadi prioritas penyelesaian/lelang agar &gt;90 Hari tetap nihil.</p>
+    </div>
+  `;
+
+  // Aging Table
+  let html = `
+    <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 font-bold">Bucket Umur</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 18 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">Rek 19 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih Rek</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 18 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">OSL 19 Nov</th>
+        <th class="px-3 py-3 text-right font-bold">Selisih DtD (Rp)</th>
+        <th class="px-4 py-3 text-right font-bold">Porsi OSL 19 Nov</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+  `;
+  b.forEach(item => {
+    const dr = item.rek19 - item.rek18;
+    const dn = item.osl19 - item.osl18;
+    const share = ((item.osl19 / AGG.totOsl19) * 100).toFixed(1).replace('.', ',') + '%';
+    html += `
+      <tr class="hover:bg-slate-50">
+        <td class="px-4 py-2.5 font-bold text-slate-900">${item.label}</td>
+        <td class="px-3 py-2.5 text-right text-slate-600">${fmtInt(item.rek18)}</td>
+        <td class="px-3 py-2.5 text-right font-semibold text-slate-900">${fmtInt(item.rek19)}</td>
+        <td class="px-3 py-2.5 text-right font-bold ${dr > 0 ? 'text-rose-700' : 'text-slate-400'}">${dr > 0 ? '+' + dr : dr}</td>
+        <td class="px-3 py-2.5 text-right text-slate-600">${fmtRp(item.osl18)}</td>
+        <td class="px-3 py-2.5 text-right font-semibold text-slate-900">${fmtRp(item.osl19)}</td>
+        <td class="px-3 py-2.5 text-right font-bold ${dn > 0 ? 'text-rose-700' : 'text-slate-400'}">${dn === 0 ? 'Rp 0' : fmtRp(dn, true)}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-slate-700">${share}</td>
+      </tr>
+    `;
+  });
+  html += `</tbody>`;
+  document.getElementById('agingSummaryTable').innerHTML = html;
+
+  // Charts
+  if (charts.agingCompare) charts.agingCompare.destroy();
+  charts.agingCompare = new Chart(document.getElementById('agingCompareChart'), {
+    type: 'bar',
+    data: {
+      labels: b.map(x => x.label),
+      datasets: [
+        { label: '18 Nov 2026', data: b.map(x => +(x.osl18 / 1e6).toFixed(2)), backgroundColor: '#94a3b8', borderRadius: 5 },
+        { label: '19 Nov 2026', data: b.map(x => +(x.osl19 / 1e6).toFixed(2)), backgroundColor: '#009944', borderRadius: 5 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
+      }
+    }
+  });
+
+  if (charts.agingDelta) charts.agingDelta.destroy();
+  charts.agingDelta = new Chart(document.getElementById('agingDeltaChart'), {
+    type: 'bar',
+    data: {
+      labels: b.map(x => x.label),
+      datasets: [{
+        label: 'Penambahan DtD (Juta Rp)',
+        data: b.map(x => +((x.osl19 - x.osl18) / 1e6).toFixed(2)),
+        backgroundColor: b.map(x => (x.osl19 - x.osl18) > 0 ? '#e11d48' : '#cbd5e1'),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } }
+      }
+    }
+  });
+}
+
+// Controls
+function switchTab(tab) {
+  ['matrix', 'outlet', 'product', 'aging'].forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'outlet') renderOutletTab();
+  if (tab === 'product') renderProductTab();
+  if (tab === 'aging') renderAgingTab();
+}
+
+function setMatrixMode(mode) {
+  matrixMode = mode;
+  ['curr', 'prev', 'delta'].forEach(m => {
+    document.getElementById('mode-' + m).classList.toggle('active', m === mode);
+  });
+  renderMatrix();
+}
+
+function setOutletChartMetric(metric) {
+  outletChartMetric = metric;
+  document.getElementById('outletChartOslBtn').className = metric === 'osl'
+    ? 'px-2.5 py-1 rounded-md bg-emerald-700 text-white transition'
+    : 'px-2.5 py-1 rounded-md text-slate-600 transition';
+  document.getElementById('outletChartRekBtn').className = metric === 'rek'
+    ? 'px-2.5 py-1 rounded-md bg-emerald-700 text-white transition'
+    : 'px-2.5 py-1 rounded-md text-slate-600 transition';
+  renderOutletCharts();
+}
+
+function setNumFormat(fmt) {
+  numFormat = fmt;
+  document.getElementById('fmtShortBtn').className = fmt === 'short'
+    ? 'px-2.5 py-1 rounded-md bg-white text-emerald-800 font-semibold transition'
+    : 'px-2.5 py-1 rounded-md text-emerald-50 hover:text-white transition';
+  document.getElementById('fmtFullBtn').className = fmt === 'full'
+    ? 'px-2.5 py-1 rounded-md bg-white text-emerald-800 font-semibold transition'
+    : 'px-2.5 py-1 rounded-md text-emerald-50 hover:text-white transition';
+  renderKPIs();
+  renderMatrix();
+  if (!document.getElementById('panel-outlet').classList.contains('hidden')) renderOutletTab();
+  if (!document.getElementById('panel-product').classList.contains('hidden')) renderProductTab();
+  if (!document.getElementById('panel-aging').classList.contains('hidden')) renderAgingTab();
+}
+
+function copyWASummary() {
+  const text = [
+    '*LAPORAN KINERJA BJDPL CP PAMANUKAN (DtD 18 vs 19 Nov 2026)*',
+    `Total OSL: Rp 11,52 M -> *Rp 11,92 M* (+Rp 397,96 Jt / +3,45%)`,
+    `Total Rek: 714 Rek -> *727 Rek* (+13 Rek / +1,82%)`,
+    '',
+    '*Penambahan DtD per Outlet:*',
+    '1. UPC Rancasari: +Rp 206,49 Jt (+5 Rek | +4,81%)',
+    '2. UPC Pasar Wates: +Rp 90,22 Jt (+2 Rek | +4,16%)',
+    '3. CP Pamanukan: +Rp 68,15 Jt (+2 Rek | +3,00%)',
+    '4. UPC Pusaka Ratu: +Rp 17,86 Jt (+2 Rek | +1,50%)',
+    '5. UPC Ciasem: +Rp 15,24 Jt (+2 Rek | +1,04%)',
+    '6. BRI Unit Bojongkeding: Rp 0 (0 Rek | Stabil)',
+    '',
+    '*Penambahan DtD per Produk:*',
+    '- GADAI KCA: +Rp 390,73 Jt (+13 Rek | 98,2% share)',
+    '- MULIA ULTIMATE KONVEN: +Rp 7,23 Jt (0 Rek net; Ciasem +Rp 14,12 Jt, Pasar Wates -Rp 6,89 Jt)',
+    '- 5 produk lainnya stabil (0 perubahan).'
+  ].join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('copyBtnText');
+    el.textContent = 'Tersalin!';
+    setTimeout(() => el.textContent = 'Salin Ringkasan WA', 2000);
+  });
+}
+
+// Init
+populateOutletFilter();
+renderKPIs();
+renderMatrix();
+</script>
+</body>
+</html>
