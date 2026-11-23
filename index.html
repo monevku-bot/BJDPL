@@ -117,6 +117,17 @@
             <h1 class="text-lg sm:text-xl font-extrabold tracking-tight uppercase">KINERJA BJDPL CP PAMANUKAN</h1>
             <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-white/20 border border-white/30">6 Outlet Template</span>
             <span id="customDataBadge" class="hidden px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-300 text-amber-950">Data Upload Lokal</span>
+            <span id="visitorTotalBadge" title="Total kunjungan ke dashboard (gratis via Abacus Counter API)" class="no-print inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-white/15 border border-white/25 text-white">
+              <svg class="w-3.5 h-3.5 text-emerald-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span>Total: <strong id="visitorTotalVal" class="tabular-nums">...</strong></span>
+            </span>
+            <span id="visitorOnlineBadge" title="Estimasi pengunjung aktif dalam 5 menit terakhir (diperbarui otomatis tiap 45 detik)" class="no-print inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-black/20 border border-white/25 text-emerald-50">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-300 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-lime-400"></span>
+              </span>
+              <span><strong id="visitorOnlineVal" class="text-white tabular-nums">1</strong> Online</span>
+            </span>
           </div>
           <p id="headerSubtitle" class="text-emerald-50 text-xs sm:text-sm mt-0.5">
             Perbandingan Day-to-Day (DtD): <strong class="text-white">20 November 2026</strong> vs <strong class="text-white">22 November 2026</strong> &bull; Nominal (OSL) &amp; Rekening
@@ -1630,6 +1641,74 @@ function exportUpdatedHtml() {
   URL.revokeObjectURL(url);
 }
 
+// === FREE VISITOR & ONLINE COUNTER (Abacus API - Gratis & Tanpa Daftar) ===
+const VISITOR_NS = 'bjdpl-cp-pamanukan-v1';
+const VISITOR_API = 'https://abacus.jasoncameron.dev';
+
+async function fetchCounter(action, key) {
+  const res = await fetch(`${VISITOR_API}/${action}/${VISITOR_NS}/${key}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  return typeof data.value === 'number' ? data.value : null;
+}
+
+async function updateTotalVisitorBadge() {
+  const el = document.getElementById('visitorTotalVal');
+  if (!el) return;
+  const sessionFlag = 'bjdpl_visit_counted_v1';
+  const cacheKey = 'bjdpl_last_total_visits_v1';
+  try {
+    const alreadyCounted = sessionStorage.getItem(sessionFlag) === '1';
+    const val = await fetchCounter(alreadyCounted ? 'get' : 'hit', 'total-visits');
+    if (val !== null) {
+      if (!alreadyCounted) sessionStorage.setItem(sessionFlag, '1');
+      try { localStorage.setItem(cacheKey, String(val)); } catch (e) {}
+      el.textContent = val.toLocaleString('id-ID');
+      return;
+    }
+  } catch (e) {}
+  // Fallback offline / lokal
+  try {
+    let localVal = parseInt(localStorage.getItem(cacheKey) || '0', 10);
+    if (sessionStorage.getItem(sessionFlag) !== '1') {
+      localVal += 1;
+      localStorage.setItem(cacheKey, String(localVal));
+      sessionStorage.setItem(sessionFlag, '1');
+    }
+    el.textContent = localVal.toLocaleString('id-ID');
+  } catch (e) {
+    el.textContent = '1';
+  }
+}
+
+async function updateOnlineVisitorBadge() {
+  const el = document.getElementById('visitorOnlineVal');
+  if (!el) return;
+  const bucket5m = String(Math.floor(Date.now() / (5 * 60 * 1000)));
+  const bucketKey = 'bjdpl_online_bucket_v1';
+  try {
+    const lastBucket = sessionStorage.getItem(bucketKey);
+    const action = lastBucket === bucket5m ? 'get' : 'hit';
+    const val = await fetchCounter(action, 'online-' + bucket5m);
+    if (val !== null) {
+      sessionStorage.setItem(bucketKey, bucket5m);
+      el.textContent = Math.max(1, val).toLocaleString('id-ID');
+      return;
+    }
+  } catch (e) {}
+  el.textContent = '1';
+}
+
+function initVisitorBadges() {
+  updateTotalVisitorBadge();
+  updateOnlineVisitorBadge();
+  setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      updateOnlineVisitorBadge();
+    }
+  }, 45000);
+}
+
 // Init: check saved localStorage first
 (function init() {
   try {
@@ -1643,6 +1722,7 @@ function exportUpdatedHtml() {
     }
   } catch (e) {}
   renderAll();
+  initVisitorBadges();
 })();
 </script>
 </body>
