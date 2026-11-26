@@ -97,11 +97,185 @@
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
+    .print-only { display: none; }
+    .print-section-title { display: none; }
+
     @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
       .no-print { display: none !important; }
-      body { background: #ffffff; }
+      .print-only { display: block !important; }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 9pt !important;
+      }
+      header.pegadaian-header {
+        background: #008a3d !important;
+        box-shadow: none !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+      }
+      header.pegadaian-header > div {
+        max-width: none !important;
+        padding: 8px 14px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+      }
+      header.pegadaian-header h1 {
+        font-size: 13pt !important;
+        line-height: 1.2 !important;
+      }
+      header.pegadaian-header #headerSubtitle {
+        font-size: 8.5pt !important;
+      }
+      main {
+        max-width: none !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      main > * + * {
+        margin-top: 8px !important;
+      }
+      #kpiGrid {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      #kpiGrid > div {
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      #executiveInsightBox {
+        padding: 8px 12px !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      #riskBucketCards {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-grid-12 {
+        display: grid !important;
+        grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-col-7 { grid-column: span 7 / span 7 !important; }
+      .print-col-5 { grid-column: span 5 / span 5 !important; }
+      .shadow-sm, .shadow-md, .shadow-2xl { box-shadow: none !important; }
+      .overflow-x-auto, .overflow-hidden { overflow: visible !important; }
+      .sticky-col, .sticky-header {
+        position: static !important;
+        left: auto !important;
+        z-index: auto !important;
+      }
+      .rounded-2xl { border-radius: 8px !important; }
+      .template-banner {
+        padding: 5px 10px !important;
+      }
+      .template-banner h2 {
+        font-size: 9.5pt !important;
+      }
+      .matrix-table {
+        width: 100% !important;
+        font-size: 7pt !important;
+        line-height: 1.2 !important;
+        border-collapse: collapse !important;
+      }
+      .matrix-table th,
+      .matrix-table td {
+        padding: 2px 3px !important;
+      }
+      .matrix-table th:first-child,
+      .matrix-table td:first-child {
+        white-space: normal !important;
+        max-width: 150px !important;
+        word-break: break-word !important;
+      }
+      table {
+        width: 100% !important;
+        font-size: 8pt !important;
+      }
+      thead { display: table-header-group; }
+      tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-chart-box {
+        height: auto !important;
+        min-height: 0 !important;
+      }
+      .print-chart-img {
+        display: block !important;
+        width: 100% !important;
+        max-height: 205px !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+      }
+      body.print-portrait #kpiGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+      body.print-portrait .print-grid-12 {
+        grid-template-columns: 1fr !important;
+      }
+      body.print-portrait .print-col-7,
+      body.print-portrait .print-col-5 {
+        grid-column: span 1 / span 1 !important;
+      }
+      body.print-portrait .matrix-table {
+        font-size: 5.8pt !important;
+      }
+      body.print-all-tabs section[id^="panel-"] {
+        display: block !important;
+      }
+      body.print-all-tabs .print-section-title {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        background: #ecfdf5 !important;
+        border: 1px solid #a7f3d0 !important;
+        color: #065f46 !important;
+        font-weight: 800;
+        font-size: 9.5pt;
+        padding: 5px 10px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      body.print-all-tabs #panel-outlet,
+      body.print-all-tabs #panel-product,
+      body.print-all-tabs #panel-aging {
+        break-before: page !important;
+        page-break-before: always !important;
+        padding-top: 2px;
+      }
+      footer {
+        padding: 6px 0 0 0 !important;
+        font-size: 7.5pt !important;
+        color: #64748b !important;
+      }
     }
   </style>
+  <style id="dynamicPrintPageStyle">@page { size: A4 landscape; margin: 7mm 8mm 8mm 8mm; }</style>
 </head>
 <body class="min-h-screen antialiased">
 
@@ -135,6 +309,11 @@
         </div>
       </div>
 
+      <div id="printTimestampStamp" class="print-only text-right text-[10px] text-emerald-50 leading-tight shrink-0">
+        <div class="font-bold text-white" id="printModeLabel">Laporan Dashboard BJDPL</div>
+        <div id="printTimeLabel">Dicetak dari Dashboard Monev</div>
+      </div>
+
       <div class="flex flex-wrap items-center gap-2 no-print">
         <div class="inline-flex rounded-lg bg-black/15 p-1 border border-white/20 text-xs font-medium">
           <button id="fmtShortBtn" onclick="setNumFormat('short')" class="px-2.5 py-1 rounded-md bg-white text-emerald-800 font-semibold transition">Ringkas (Jt/M)</button>
@@ -144,6 +323,42 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 10l5-5 5 5M12 5v11"/></svg>
           <span>Update Excel</span>
         </button>
+        <div id="printMenuWrapper" class="relative">
+          <button id="printMenuBtn" type="button" onclick="togglePrintMenu(event)" aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/35 hover:bg-emerald-950/55 border border-white/30 text-white text-xs font-bold shadow-sm transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+            <span>Cetak PDF</span>
+            <svg class="w-3 h-3 opacity-85" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div id="printDropdown" class="hidden absolute right-0 mt-2 w-72 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-200 py-1.5 z-50">
+            <div class="px-3 py-1.5 border-b border-slate-100">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Opsi Cetak / Simpan PDF</p>
+            </div>
+            <button type="button" onclick="printDashboard('active', 'landscape')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 transition flex items-start gap-2.5">
+              <span class="mt-0.5 w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-xs font-extrabold">1</span>
+              <span>
+                <span class="block text-xs font-bold text-slate-900">Tab Aktif — Fit to Page <span class="ml-1 px-1.5 py-0.5 text-[10px] rounded bg-emerald-100 text-emerald-800">Rekomendasi</span></span>
+                <span class="block text-[11px] text-slate-500">A4 Landscape, skala otomatis agar tabel &amp; grafik pas di halaman</span>
+              </span>
+            </button>
+            <button type="button" onclick="printDashboard('all', 'landscape')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 transition flex items-start gap-2.5">
+              <span class="mt-0.5 w-6 h-6 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 text-xs font-extrabold">4</span>
+              <span>
+                <span class="block text-xs font-bold text-slate-900">Laporan Lengkap (Semua 4 Tab)</span>
+                <span class="block text-[11px] text-slate-500">A4 Landscape, cetak Matriks, Outlet, Produk &amp; Aging per halaman</span>
+              </span>
+            </button>
+            <button type="button" onclick="printDashboard('active', 'portrait')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 transition flex items-start gap-2.5">
+              <span class="mt-0.5 w-6 h-6 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 text-xs font-extrabold">P</span>
+              <span>
+                <span class="block text-xs font-bold text-slate-900">Tab Aktif — A4 Portrait (Tegak)</span>
+                <span class="block text-[11px] text-slate-500">Posisi kertas tegak, menyesuaikan lebar halaman A4</span>
+              </span>
+            </button>
+            <div class="px-3 py-1.5 mt-1 border-t border-slate-100 bg-slate-50 rounded-b-xl">
+              <p class="text-[10px] text-slate-500 leading-snug">Tips: Pada dialog cetak, pilih <strong>Save as PDF</strong> &amp; centang <strong>Background graphics</strong> agar warna tetap tampil rapi.</p>
+            </div>
+          </div>
+        </div>
         <button onclick="copyWASummary()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-emerald-800 hover:bg-emerald-50 text-xs font-bold shadow-sm transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span id="copyBtnText">Salin Ringkasan WA</span>
@@ -185,6 +400,7 @@
 
     <!-- TAB 1: MATRIKS TEMPLATE -->
     <section id="panel-matrix" class="space-y-4">
+      <div class="print-section-title"><span>1. Matriks Template (Aging BJDPL)</span><span>CP Pamanukan</span></div>
       <div id="executiveInsightBox" class="bg-white rounded-2xl border border-emerald-200/80 shadow-sm p-4"></div>
 
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -224,29 +440,30 @@
 
     <!-- TAB 2: ANALISA PER OUTLET -->
     <section id="panel-outlet" class="hidden space-y-5">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div class="print-section-title"><span>2. Analisa Per Outlet</span><span>6 Outlet Template</span></div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 print-grid-12">
+        <div class="lg:col-span-7 print-col-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <div>
               <h3 id="outletCompareTitle" class="text-sm font-bold text-slate-900">Perbandingan BJDPL per Outlet</h3>
               <p class="text-xs text-slate-500">Khusus 6 outlet sesuai template CP Pamanukan</p>
             </div>
-            <div class="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+            <div class="inline-flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold no-print">
               <button id="outletChartOslBtn" onclick="setOutletChartMetric('osl')" class="px-2.5 py-1 rounded-md bg-emerald-700 text-white transition">OSL (Juta Rp)</button>
               <button id="outletChartRekBtn" onclick="setOutletChartMetric('rek')" class="px-2.5 py-1 rounded-md text-slate-600 transition">Rekening</button>
             </div>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="outletCompareChart"></canvas>
           </div>
         </div>
 
-        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div class="lg:col-span-5 print-col-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="mb-4">
             <h3 class="text-sm font-bold text-slate-900">Peringkat Perubahan DtD per Outlet (Juta Rp)</h3>
             <p class="text-xs text-slate-500">Merah = Penambahan BJDPL (+), Hijau = Penurunan / Membaik (-)</p>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="outletDeltaChart"></canvas>
           </div>
         </div>
@@ -269,23 +486,24 @@
 
     <!-- TAB 3: ANALISA PER PRODUK -->
     <section id="panel-product" class="hidden space-y-5">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div class="print-section-title"><span>3. Analisa Per Produk &amp; Pergerakan DtD</span><span>Konsolidasi 6 Outlet</span></div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 print-grid-12">
+        <div class="lg:col-span-5 print-col-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="mb-4">
             <h3 id="productDonutTitle" class="text-sm font-bold text-slate-900">Komposisi OSL BJDPL per Produk</h3>
             <p id="productDonutSub" class="text-xs text-slate-500">Proporsi eksposur terhadap total OSL cabang</p>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="productDonutChart"></canvas>
           </div>
         </div>
 
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div class="lg:col-span-7 print-col-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="mb-4">
             <h3 class="text-sm font-bold text-slate-900">Analisa Perubahan DtD per Produk (Juta Rp)</h3>
             <p id="productDeltaSub" class="text-xs text-slate-500">Kontribusi kenaikan/penurunan nominal per produk</p>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="productDeltaChart"></canvas>
           </div>
         </div>
@@ -307,7 +525,7 @@
             <h3 class="text-sm font-bold text-slate-900">Rincian Seluruh Pergerakan DtD (Outlet &times; Produk &times; Bucket Umur)</h3>
             <p id="movementSub" class="text-xs text-slate-500">Daftar seluruh titik pergerakan antara tanggal pembanding dan tanggal terkini</p>
           </div>
-          <select id="moveProductFilter" onchange="renderMovementTable()" class="text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-slate-700">
+          <select id="moveProductFilter" onchange="renderMovementTable()" class="text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-slate-700 no-print">
             <option value="ALL">Semua Produk Bergerak</option>
           </select>
         </div>
@@ -319,25 +537,26 @@
 
     <!-- TAB 4: AGING & RISIKO -->
     <section id="panel-aging" class="hidden space-y-5">
+      <div class="print-section-title"><span>4. Aging &amp; Risiko Tunggakan</span><span>Distribusi Umur BJDPL</span></div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="riskBucketCards"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 print-grid-12">
+        <div class="lg:col-span-7 print-col-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="mb-4">
             <h3 id="agingCompareTitle" class="text-sm font-bold text-slate-900">Distribusi OSL BJDPL per Bucket Umur</h3>
             <p class="text-xs text-slate-500">Perbandingan posisi OSL dalam Juta Rupiah</p>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="agingCompareChart"></canvas>
           </div>
         </div>
 
-        <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div class="lg:col-span-5 print-col-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="mb-4">
             <h3 class="text-sm font-bold text-slate-900">Perubahan DtD per Bucket Umur (Juta Rp)</h3>
             <p class="text-xs text-slate-500">Pergerakan nominal per kelompok umur tunggakan</p>
           </div>
-          <div class="relative h-72">
+          <div class="relative h-72 print-chart-box">
             <canvas id="agingDeltaChart"></canvas>
           </div>
         </div>
@@ -1707,6 +1926,211 @@ function initVisitorBadges() {
       updateOnlineVisitorBadge();
     }
   }, 45000);
+}
+
+
+// =============================================================================
+// PRINT PDF (FIT TO PAGE & FULL REPORT)
+// =============================================================================
+let _printCleanupDone = true;
+let _printPrevHiddenPanels = [];
+let _printZoomTargets = [];
+
+function togglePrintMenu(e) {
+  if (e) e.stopPropagation();
+  const dd = document.getElementById('printDropdown');
+  const btn = document.getElementById('printMenuBtn');
+  if (!dd || !btn) return;
+  const isHidden = dd.classList.contains('hidden');
+  dd.classList.toggle('hidden', !isHidden);
+  btn.setAttribute('aria-expanded', String(isHidden));
+}
+
+function closePrintMenu() {
+  const dd = document.getElementById('printDropdown');
+  const btn = document.getElementById('printMenuBtn');
+  if (dd) dd.classList.add('hidden');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', (e) => {
+  const wrapper = document.getElementById('printMenuWrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    closePrintMenu();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePrintMenu();
+});
+
+function getActiveTabName() {
+  const tabs = ['matrix', 'outlet', 'product', 'aging'];
+  for (const t of tabs) {
+    const el = document.getElementById('panel-' + t);
+    if (el && !el.classList.contains('hidden')) return t;
+  }
+  return 'matrix';
+}
+
+function formatPrintTimestamp() {
+  const now = new Date();
+  try {
+    return now.toLocaleString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) + ' WIB';
+  } catch (e) {
+    return now.toISOString().slice(0, 16).replace('T', ' ');
+  }
+}
+
+function snapshotChartsForPrint() {
+  removeChartPrintSnapshots();
+  const canvases = document.querySelectorAll('canvas');
+  canvases.forEach(cv => {
+    const rect = cv.getBoundingClientRect();
+    if (cv.width > 0 && cv.height > 0 && rect.width > 0 && rect.height > 0) {
+      try {
+        const img = document.createElement('img');
+        img.src = cv.toDataURL('image/png', 1.0);
+        img.alt = 'Grafik BJDPL';
+        img.className = 'print-chart-img hidden';
+        img.dataset.printSnapshot = '1';
+        cv.classList.add('no-print');
+        cv.dataset.hiddenForPrint = '1';
+        cv.parentNode.appendChild(img);
+      } catch (e) {}
+    }
+  });
+}
+
+function removeChartPrintSnapshots() {
+  document.querySelectorAll('img[data-print-snapshot="1"]').forEach(img => img.remove());
+  document.querySelectorAll('canvas[data-hidden-for-print="1"]').forEach(cv => {
+    cv.classList.remove('no-print');
+    delete cv.dataset.hiddenForPrint;
+  });
+}
+
+function applyFitToPageScale(scope, orientation) {
+  resetPrintZoom();
+  const targetWidth = orientation === 'portrait' ? 710 : 1045;
+
+  const matrixTable = document.getElementById('matrixTable');
+  if (matrixTable && matrixTable.scrollWidth > 0) {
+    const w = matrixTable.scrollWidth;
+    if (w > targetWidth) {
+      const ratio = Math.max(0.58, Math.min(1, targetWidth / w));
+      matrixTable.style.zoom = ratio.toFixed(3);
+      _printZoomTargets.push(matrixTable);
+    }
+  }
+
+  if (scope === 'active') {
+    const mainEl = document.querySelector('main');
+    if (mainEl && mainEl.scrollWidth > targetWidth) {
+      const ratio = Math.max(0.72, Math.min(1, targetWidth / mainEl.scrollWidth));
+      mainEl.style.zoom = ratio.toFixed(3);
+      _printZoomTargets.push(mainEl);
+    }
+  }
+}
+
+function resetPrintZoom() {
+  _printZoomTargets.forEach(el => {
+    if (el) el.style.zoom = '';
+  });
+  _printZoomTargets = [];
+}
+
+function cleanupAfterPrint() {
+  if (_printCleanupDone) return;
+  _printCleanupDone = true;
+  document.body.classList.remove('print-all-tabs', 'print-portrait');
+  removeChartPrintSnapshots();
+  resetPrintZoom();
+  _printPrevHiddenPanels.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  _printPrevHiddenPanels = [];
+}
+
+window.addEventListener('afterprint', cleanupAfterPrint);
+
+function printDashboard(scope = 'active', orientation = 'landscape', dryRun = false) {
+  closePrintMenu();
+  cleanupAfterPrint();
+  _printCleanupDone = false;
+
+  const pageStyle = document.getElementById('dynamicPrintPageStyle');
+  if (pageStyle) {
+    const margin = orientation === 'portrait' ? '8mm 7mm 9mm 7mm' : '7mm 8mm 8mm 8mm';
+    pageStyle.textContent = `@page { size: A4 ${orientation}; margin: ${margin}; }`;
+  }
+
+  const tabLabels = {
+    matrix: 'Matriks Template (Aging)',
+    outlet: 'Analisa Per Outlet',
+    product: 'Analisa Per Produk',
+    aging: 'Aging & Risiko'
+  };
+  const modeLabelEl = document.getElementById('printModeLabel');
+  const timeLabelEl = document.getElementById('printTimeLabel');
+  if (modeLabelEl) {
+    modeLabelEl.textContent = scope === 'all'
+      ? 'Laporan Lengkap (4 Tab)'
+      : 'Tab: ' + (tabLabels[getActiveTabName()] || 'Dashboard BJDPL');
+  }
+  if (timeLabelEl) {
+    timeLabelEl.textContent = 'Dicetak: ' + formatPrintTimestamp();
+  }
+
+  document.body.classList.toggle('print-portrait', orientation === 'portrait');
+
+  _printPrevHiddenPanels = [];
+  if (scope === 'all') {
+    document.body.classList.add('print-all-tabs');
+    ['matrix', 'outlet', 'product', 'aging'].forEach(t => {
+      const panel = document.getElementById('panel-' + t);
+      if (panel && panel.classList.contains('hidden')) {
+        _printPrevHiddenPanels.push('panel-' + t);
+        panel.classList.remove('hidden');
+      }
+    });
+    renderOutletTab();
+    renderProductTab();
+    renderAgingTab();
+  }
+
+  const runPrint = () => {
+    Object.values(charts).forEach(ch => {
+      if (ch && typeof ch.resize === 'function') {
+        try {
+          ch.resize();
+          ch.update('none');
+        } catch (e) {}
+      }
+    });
+    snapshotChartsForPrint();
+    applyFitToPageScale(scope, orientation);
+    if (!dryRun) {
+      window.print();
+      setTimeout(() => {
+        if (!_printCleanupDone) cleanupAfterPrint();
+      }, 1500);
+    }
+  };
+
+  if (dryRun) {
+    runPrint();
+  } else {
+    setTimeout(runPrint, scope === 'all' ? 350 : 120);
+  }
 }
 
 // Init: check saved localStorage first
