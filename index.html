@@ -291,6 +291,7 @@
             <h1 class="text-lg sm:text-xl font-extrabold tracking-tight uppercase">KINERJA BJDPL CP PAMANUKAN</h1>
             <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-white/20 border border-white/30">6 Outlet Template</span>
             <span id="customDataBadge" class="hidden px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-300 text-amber-950">Data Upload Lokal</span>
+            <span id="liveSyncBadge" class="hidden no-print inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-sky-300/90 text-sky-950" title="Data dimuat otomatis dari data.json di GitHub Pages">Live Sync</span>
             <span id="visitorTotalBadge" title="Total kunjungan ke dashboard (gratis via Abacus Counter API)" class="no-print inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-white/15 border border-white/25 text-white">
               <svg class="w-3.5 h-3.5 text-emerald-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               <span>Total: <strong id="visitorTotalVal" class="tabular-nums">...</strong></span>
@@ -304,7 +305,7 @@
             </span>
           </div>
           <p id="headerSubtitle" class="text-emerald-50 text-xs sm:text-sm mt-0.5">
-            Perbandingan Day-to-Day (DtD): <strong class="text-white">24 November 2026</strong> vs <strong class="text-white">25 November 2026</strong> &bull; Nominal (OSL) &amp; Rekening
+            Perbandingan Day-to-Day (DtD): <strong class="text-white">25 November 2026</strong> vs <strong class="text-white">26 November 2026</strong> &bull; Nominal (OSL) &amp; Rekening
           </p>
         </div>
       </div>
@@ -588,65 +589,131 @@
       </div>
 
       <div class="p-5 space-y-4">
+        <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed">
+          <strong>Update Harian Lebih Cepat:</strong> Cukup pilih <strong>2 file Hari Ini</strong> (kolom kanan) — data Terkini yang sedang aktif otomatis bergeser jadi Pembanding (H-1). Kolom H-1 hanya perlu diisi jika ingin mengganti tanggal pembanding secara manual.
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Kolom H-1 -->
+          <!-- Kolom H-1 (Opsional) -->
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-slate-600 text-white text-xs font-bold flex items-center justify-center">1</span>
-              <span class="text-xs font-extrabold uppercase text-slate-700">Data Pembanding (H-1)</span>
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                <span class="text-xs font-extrabold uppercase text-slate-700">Pembanding (H-1)</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-bold">Opsional</span>
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">Label Tanggal Pembanding</label>
-              <input id="inputDatePrev" type="text" placeholder="cth: 24 November 2026" class="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+              <input id="inputDatePrev" type="text" placeholder="cth: 25 November 2026" class="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">File Nominal H-1 (.xlsx)</label>
-              <input id="fileNomPrev" type="file" accept=".xlsx,.xls" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+              <input id="fileNomPrev" type="file" accept=".xlsx,.xls" onchange="autoFillDateFromFile(this, 'inputDatePrev')" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 mb-1">File Rekening H-1 (.xlsx)</label>
-              <input id="fileRekPrev" type="file" accept=".xlsx,.xls" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+              <input id="fileRekPrev" type="file" accept=".xlsx,.xls" onchange="autoFillDateFromFile(this, 'inputDatePrev')" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
             </div>
           </div>
 
           <!-- Kolom Hari Ini -->
           <div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-3">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-emerald-700 text-white text-xs font-bold flex items-center justify-center">2</span>
-              <span class="text-xs font-extrabold uppercase text-emerald-900">Data Terkini (Hari Ini)</span>
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-emerald-700 text-white text-xs font-bold flex items-center justify-center">2</span>
+                <span class="text-xs font-extrabold uppercase text-emerald-900">Data Terkini (Hari Ini)</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900 text-[10px] font-bold">Wajib</span>
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-emerald-800 mb-1">Label Tanggal Terkini</label>
-              <input id="inputDateCurr" type="text" placeholder="cth: 25 November 2026" class="w-full text-xs px-3 py-1.5 rounded-lg border border-emerald-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+              <input id="inputDateCurr" type="text" placeholder="cth: 26 November 2026" class="w-full text-xs px-3 py-1.5 rounded-lg border border-emerald-300 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-emerald-800 mb-1">File Nominal Hari Ini (.xlsx)</label>
-              <input id="fileNomCurr" type="file" accept=".xlsx,.xls" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800" />
+              <input id="fileNomCurr" type="file" accept=".xlsx,.xls" onchange="autoFillDateFromFile(this, 'inputDateCurr')" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800" />
             </div>
             <div>
               <label class="block text-[11px] font-semibold text-emerald-800 mb-1">File Rekening Hari Ini (.xlsx)</label>
-              <input id="fileRekCurr" type="file" accept=".xlsx,.xls" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800" />
+              <input id="fileRekCurr" type="file" accept=".xlsx,.xls" onchange="autoFillDateFromFile(this, 'inputDateCurr')" class="w-full text-xs file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800" />
+            </div>
+          </div>
+        </div>
+
+        <!-- AUTO-PUBLISH 1-KLIK KE GITHUB (data.json) -->
+        <div class="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </span>
+              <div>
+                <span class="text-xs font-extrabold text-indigo-950">Auto-Publish 1-Klik ke GitHub (<code class="font-mono text-indigo-700">data.json</code>)</span>
+                <p class="text-[10px] text-indigo-700">Langsung update untuk semua pengunjung GitHub Pages dalam ~30 detik tanpa menyentuh <code>index.html</code>.</p>
+              </div>
+            </div>
+            <button type="button" onclick="toggleGithubSettings()" id="ghConfigToggleBtn" class="text-[11px] font-bold text-indigo-700 hover:text-indigo-900 underline">
+              Pengaturan GitHub
+            </button>
+          </div>
+
+          <div id="ghSettingsPanel" class="hidden pt-2 border-t border-indigo-200/80 space-y-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-indigo-900 mb-0.5">Username / Owner GitHub</label>
+                <input id="ghOwner" type="text" placeholder="cth: yanirawan" class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-indigo-900 mb-0.5">Nama Repository</label>
+                <input id="ghRepo" type="text" placeholder="cth: bjdpl-pamanukan" class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              </div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label class="block text-[10px] font-bold text-indigo-900 mb-0.5">Branch</label>
+                  <input id="ghBranch" type="text" value="main" placeholder="main" class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-indigo-900 mb-0.5">File Path</label>
+                  <input id="ghPath" type="text" value="data.json" placeholder="data.json" class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <label class="text-[10px] font-bold text-indigo-900">GitHub Personal Access Token (disimpan aman hanya di browser Anda)</label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="toggleGhTokenVisibility()" id="ghTokenEyeBtn" class="text-[10px] font-semibold text-indigo-700 hover:underline">Tampilkan</button>
+                  <button type="button" onclick="clearGithubToken()" class="text-[10px] font-semibold text-rose-600 hover:underline">Hapus Token</button>
+                </div>
+              </div>
+              <input id="ghToken" type="password" autocomplete="off" placeholder="github_pat_... atau ghp_... (izin: Contents Read & Write)" class="w-full text-xs px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-white font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <p class="mt-1 text-[10px] text-slate-500 leading-snug">
+                Cara buat token 1x: GitHub &rarr; <strong>Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens</strong> &rarr; pilih repo dashboard ini &rarr; <strong>Repository permissions &rarr; Contents: Read and write</strong>.
+              </p>
             </div>
           </div>
         </div>
 
         <div id="uploadStatusMsg" class="hidden p-3 rounded-xl text-xs font-medium"></div>
 
-        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
-          <strong>Tips Update GitHub Pages:</strong> Setelah klik <em>Terapkan &amp; Update Dashboard</em>, data langsung tersimpan di browser Anda untuk briefing. Agar tim lain di link GitHub Pages juga melihat data terbaru, klik <strong>Download index.html untuk GitHub</strong> lalu timpa file <code>index.html</code> di repositori GitHub Anda.
-        </div>
-
         <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200">
-          <button onclick="resetToDefaultData()" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 border border-slate-200 transition">
-            Reset ke Data Default
-          </button>
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="exportUpdatedHtml()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold shadow-sm transition">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 10l5 5 5-5M12 15V4"/></svg>
-              Download index.html untuk GitHub
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" onclick="resetToDefaultData()" class="px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 border border-slate-200 transition">
+              Reset Default
             </button>
-            <button onclick="processUploadedExcel()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm transition">
-              Terapkan &amp; Update Dashboard
+            <button type="button" onclick="exportUpdatedHtml()" title="Cadangan offline: unduh file index.html lengkap" class="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 10l5 5 5-5M12 15V4"/></svg>
+              Unduh HTML
+            </button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="processUploadedExcel()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm transition">
+              Terapkan Lokal
+            </button>
+            <button type="button" id="publishGithubBtn" onclick="publishToGitHub()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-sm transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-5 5m5-5l5 5M5 19h14"/></svg>
+              <span>Publish ke GitHub</span>
             </button>
           </div>
         </div>
@@ -655,7 +722,7 @@
   </div>
 
   <footer class="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 text-center text-xs text-slate-400">
-    Dashboard Monitoring BJDPL CP Pamanukan &bull; Support Upload Excel Mandiri &amp; Export index.html GitHub Pages
+    Dashboard Monitoring BJDPL CP Pamanukan &bull; Support Auto-Sync GitHub Pages (data.json), Cetak PDF Fit-to-Page &amp; Upload Excel Harian
   </footer>
 
 <script>
@@ -681,7 +748,7 @@ const UMUR_MAP = [
 const STORAGE_KEY = 'bjdpl_pamanukan_custom_data_v1';
 
 /*__BJDPL_DATA_START__*/
-const DEFAULT_DATA = {"meta": {"branch": "CP PAMANUKAN", "datePrev": "24 November 2026", "dateCurr": "25 November 2026", "dateMonthPrev": "31 Oktober 2026", "buckets": ["1 sd 15 Hari", "16 sd 30 Hari", "31 sd 45 Hari", "46 sd 60 Hari", "61 sd 75 Hari", "76 sd 90 Hari", "> 90 Hari"]}, "outlets": [{"name": "13309:CP PAMANUKAN", "products": [{"name": "GADAI FLEXI", "rek18": [6, 2, 1, 0, 0, 0, 0], "osl18": [35380000, 6450000, 4380000, 0, 0, 0, 0], "rek19": [5, 2, 1, 0, 0, 0, 0], "osl19": [25380000, 6450000, 4380000, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [32, 40, 28, 25, 8, 1, 0], "osl18": [266570000, 301720000, 308930000, 920250000, 68870000, 115000000, 0], "rek19": [31, 37, 28, 25, 8, 1, 0], "osl19": [255150000, 292450000, 308930000, 920250000, 68870000, 115000000, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [4, 13, 6, 1, 5, 1, 0], "osl18": [11180000, 20240000, 45340000, 2000000, 21270000, 800000, 0], "rek19": [3, 12, 6, 1, 5, 1, 0], "osl19": [1490000, 15240000, 45340000, 2000000, 21270000, 800000, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [0, 0, 0, 0, 1, 0, 0], "osl18": [0, 0, 0, 0, 4390604, 0, 0], "rek19": [0, 0, 0, 0, 1, 0, 0], "osl19": [0, 0, 0, 0, 4390604, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 1, 0, 1, 2, 0, 0], "osl18": [3650041, 1882750, 0, 11319875, 6843350, 0, 0], "rek19": [1, 1, 0, 1, 2, 0, 0], "osl19": [3650041, 1882750, 0, 11319875, 6843350, 0, 0]}]}, {"name": "13311:UPC PUSAKA RATU", "products": [{"name": "GADAI FLEXI", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 3360000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 3360000, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [33, 22, 10, 19, 0, 0, 0], "osl18": [386940000, 145420000, 103670000, 270580000, 0, 0, 0], "rek19": [32, 21, 10, 19, 0, 0, 0], "osl19": [343940000, 134890000, 103670000, 270580000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [0, 2, 1, 0, 3, 0, 0], "osl18": [0, 11090000, 2240000, 0, 14790000, 0, 0], "rek19": [0, 2, 1, 0, 3, 0, 0], "osl19": [0, 11090000, 2240000, 0, 14790000, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [2, 0, 0, 0, 0, 0, 0], "osl18": [4762972, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [2581872, 0, 0, 0, 0, 0, 0]}]}, {"name": "13312:UPC PASAR WATES", "products": [{"name": "GADAI FLEXI", "rek18": [5, 7, 0, 1, 0, 0, 0], "osl18": [56890000, 84030000, 0, 4000000, 0, 0, 0], "rek19": [5, 7, 0, 1, 0, 0, 0], "osl19": [56890000, 84030000, 0, 4000000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [40, 19, 26, 18, 4, 0, 0], "osl18": [487440000, 262650000, 225660000, 305300000, 488950000, 0, 0], "rek19": [35, 19, 26, 16, 2, 0, 0], "osl19": [449330000, 262650000, 225660000, 283490000, 475750000, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [3, 0, 1, 4, 4, 0, 0], "osl18": [5490000, 0, 1470000, 3160000, 5480000, 0, 0], "rek19": [3, 0, 1, 4, 4, 0, 0], "osl19": [5490000, 0, 1470000, 3160000, 5480000, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 7000000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 7000000, 0, 0, 0, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [1, 0, 0, 0, 3, 0, 0], "osl18": [1741012, 0, 0, 0, 15721244, 0, 0], "rek19": [1, 0, 0, 0, 3, 0, 0], "osl19": [1741012, 0, 0, 0, 15721244, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [6890946, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [6890946, 0, 0, 0, 0, 0, 0]}]}, {"name": "13313:UPC RANCASARI", "products": [{"name": "GADAI AGEN", "rek18": [30, 0, 1, 4, 1, 1, 0], "osl18": [779890000, 0, 14700000, 824000000, 211300000, 25100000, 0], "rek19": [30, 0, 1, 4, 1, 1, 0], "osl19": [779890000, 0, 14700000, 824000000, 211300000, 25100000, 0]}, {"name": "GADAI FLEXI", "rek18": [1, 1, 0, 1, 0, 0, 0], "osl18": [6160000, 5000000, 0, 600000, 0, 0, 0], "rek19": [1, 0, 0, 1, 0, 0, 0], "osl19": [6160000, 0, 0, 600000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [32, 30, 23, 17, 0, 0, 0], "osl18": [539570000, 369390000, 306360000, 120480000, 0, 0, 0], "rek19": [30, 30, 23, 17, 0, 0, 0], "osl19": [489240000, 369390000, 306360000, 120480000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 2, 0, 0, 0, 0, 0], "osl18": [1110000, 880000, 0, 0, 0, 0, 0], "rek19": [2, 2, 0, 0, 0, 0, 0], "osl19": [1110000, 880000, 0, 0, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [3, 1, 0, 0, 0, 0, 0], "osl18": [461966500, 1565700, 0, 0, 0, 0, 0], "rek19": [1, 3, 0, 0, 0, 0, 0], "osl19": [6077500, 457454700, 0, 0, 0, 0, 0]}]}, {"name": "13314:UPC CIASEM", "products": [{"name": "GADAI FLEXI", "rek18": [0, 1, 0, 1, 0, 0, 0], "osl18": [0, 1560000, 0, 1200000, 0, 0, 0], "rek19": [0, 1, 0, 1, 0, 0, 0], "osl19": [0, 1560000, 0, 1200000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [18, 14, 11, 5, 0, 0, 0], "osl18": [299980000, 149580000, 104330000, 621760000, 0, 0, 0], "rek19": [17, 14, 11, 5, 0, 0, 0], "osl19": [292490000, 149580000, 104330000, 621760000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 4, 5, 3, 2, 0, 0], "osl18": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0], "rek19": [2, 4, 5, 3, 2, 0, 0], "osl19": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 1, 1, 0, 0, 0, 0], "osl18": [0, 48300000, 9166600, 0, 0, 0, 0], "rek19": [0, 1, 1, 0, 0, 0, 0], "osl19": [0, 48300000, 9166600, 0, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [3571910, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [3571910, 0, 0, 0, 0, 0, 0]}]}, {"name": "17457:BRI UNIT BOJONGKEDING", "products": [{"name": "GADAI FLEXI", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [1800000, 0, 0, 0, 0, 0, 0], "rek19": [0, 0, 0, 0, 0, 0, 0], "osl19": [0, 0, 0, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [1, 1, 1, 2, 2, 0, 0], "osl18": [20700000, 11910000, 10880000, 21250000, 13960000, 0, 0], "rek19": [1, 1, 1, 2, 2, 0, 0], "osl19": [20700000, 11910000, 10880000, 21250000, 13960000, 0, 0]}]}]};
+const DEFAULT_DATA = {"meta": {"branch": "CP PAMANUKAN", "datePrev": "25 November 2026", "dateCurr": "26 November 2026", "dateMonthPrev": "31 Oktober 2026", "buckets": ["1 sd 15 Hari", "16 sd 30 Hari", "31 sd 45 Hari", "46 sd 60 Hari", "61 sd 75 Hari", "76 sd 90 Hari", "> 90 Hari"]}, "outlets": [{"name": "13309:CP PAMANUKAN", "products": [{"name": "GADAI FLEXI", "rek18": [5, 2, 1, 0, 0, 0, 0], "osl18": [25380000, 6450000, 4380000, 0, 0, 0, 0], "rek19": [5, 2, 1, 0, 0, 0, 0], "osl19": [25380000, 6450000, 4380000, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [31, 37, 28, 25, 8, 1, 0], "osl18": [255150000, 292450000, 308930000, 920250000, 68870000, 115000000, 0], "rek19": [31, 36, 27, 25, 8, 1, 0], "osl19": [255150000, 289430000, 307230000, 920250000, 68870000, 115000000, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [3, 12, 6, 1, 5, 1, 0], "osl18": [1490000, 15240000, 45340000, 2000000, 21270000, 800000, 0], "rek19": [3, 12, 6, 1, 5, 1, 0], "osl19": [1490000, 15240000, 45340000, 2000000, 21270000, 800000, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [0, 0, 0, 0, 1, 0, 0], "osl18": [0, 0, 0, 0, 4390604, 0, 0], "rek19": [0, 0, 0, 0, 1, 0, 0], "osl19": [0, 0, 0, 0, 4390604, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 1, 0, 1, 2, 0, 0], "osl18": [3650041, 1882750, 0, 11319875, 6843350, 0, 0], "rek19": [1, 0, 1, 1, 2, 0, 0], "osl19": [3650041, 0, 1882750, 11319875, 6843350, 0, 0]}]}, {"name": "13311:UPC PUSAKA RATU", "products": [{"name": "GADAI FLEXI", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 3360000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 3360000, 0, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [32, 21, 10, 19, 0, 0, 0], "osl18": [343940000, 134890000, 103670000, 270580000, 0, 0, 0], "rek19": [29, 21, 10, 19, 0, 0, 0], "osl19": [336550000, 134890000, 103670000, 270580000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [0, 2, 1, 0, 3, 0, 0], "osl18": [0, 11090000, 2240000, 0, 14790000, 0, 0], "rek19": [0, 2, 1, 0, 3, 0, 0], "osl19": [0, 11090000, 2240000, 0, 14790000, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [2581872, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [2581872, 0, 0, 0, 0, 0, 0]}]}, {"name": "13312:UPC PASAR WATES", "products": [{"name": "GADAI FLEXI", "rek18": [5, 7, 0, 1, 0, 0, 0], "osl18": [56890000, 84030000, 0, 4000000, 0, 0, 0], "rek19": [5, 7, 0, 1, 0, 0, 0], "osl19": [56890000, 84030000, 0, 4000000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [35, 19, 26, 16, 2, 0, 0], "osl18": [449330000, 262650000, 225660000, 283490000, 475750000, 0, 0], "rek19": [35, 19, 26, 16, 2, 0, 0], "osl19": [449330000, 262650000, 225660000, 283490000, 475750000, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [3, 0, 1, 4, 4, 0, 0], "osl18": [5490000, 0, 1470000, 3160000, 5480000, 0, 0], "rek19": [3, 0, 1, 4, 4, 0, 0], "osl19": [5490000, 0, 1470000, 3160000, 5480000, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 0, 1, 0, 0, 0, 0], "osl18": [0, 0, 7000000, 0, 0, 0, 0], "rek19": [0, 0, 1, 0, 0, 0, 0], "osl19": [0, 0, 7000000, 0, 0, 0, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [1, 0, 0, 0, 3, 0, 0], "osl18": [1741012, 0, 0, 0, 15721244, 0, 0], "rek19": [0, 1, 0, 0, 2, 1, 0], "osl19": [0, 1741012, 0, 0, 4255808, 11465436, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [6890946, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [6890946, 0, 0, 0, 0, 0, 0]}]}, {"name": "13313:UPC RANCASARI", "products": [{"name": "GADAI AGEN", "rek18": [30, 0, 1, 4, 1, 1, 0], "osl18": [779890000, 0, 14700000, 824000000, 211300000, 25100000, 0], "rek19": [30, 0, 1, 4, 1, 1, 0], "osl19": [779890000, 0, 14700000, 824000000, 211300000, 25100000, 0]}, {"name": "GADAI FLEXI", "rek18": [1, 0, 0, 1, 0, 0, 0], "osl18": [6160000, 0, 0, 600000, 0, 0, 0], "rek19": [1, 0, 0, 1, 0, 0, 0], "osl19": [6160000, 0, 0, 600000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [30, 30, 23, 17, 0, 0, 0], "osl18": [489240000, 369390000, 306360000, 120480000, 0, 0, 0], "rek19": [28, 29, 23, 16, 0, 0, 0], "osl19": [445220000, 358540000, 306360000, 115610000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 2, 0, 0, 0, 0, 0], "osl18": [1110000, 880000, 0, 0, 0, 0, 0], "rek19": [2, 2, 0, 0, 0, 0, 0], "osl19": [1110000, 880000, 0, 0, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 3, 0, 0, 0, 0, 0], "osl18": [6077500, 457454700, 0, 0, 0, 0, 0], "rek19": [0, 4, 0, 0, 0, 0, 0], "osl19": [0, 463532200, 0, 0, 0, 0, 0]}]}, {"name": "13314:UPC CIASEM", "products": [{"name": "GADAI FLEXI", "rek18": [0, 1, 0, 1, 0, 0, 0], "osl18": [0, 1560000, 0, 1200000, 0, 0, 0], "rek19": [0, 1, 0, 1, 0, 0, 0], "osl19": [0, 1560000, 0, 1200000, 0, 0, 0]}, {"name": "GADAI KCA", "rek18": [17, 14, 11, 5, 0, 0, 0], "osl18": [292490000, 149580000, 104330000, 621760000, 0, 0, 0], "rek19": [17, 13, 11, 5, 0, 0, 0], "osl19": [292490000, 129880000, 104330000, 621760000, 0, 0, 0]}, {"name": "GADAI TABUNGAN EMAS", "rek18": [2, 4, 5, 3, 2, 0, 0], "osl18": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0], "rek19": [2, 4, 5, 3, 2, 0, 0], "osl19": [4110000, 10170000, 3500000, 1110000, 2780000, 0, 0]}, {"name": "KRASIDA", "rek18": [0, 1, 1, 0, 0, 0, 0], "osl18": [0, 48300000, 9166600, 0, 0, 0, 0], "rek19": [0, 1, 1, 0, 0, 0, 0], "osl19": [0, 48300000, 9166600, 0, 0, 0, 0]}, {"name": "MULIA ULTIMATE KONVEN", "rek18": [1, 0, 0, 0, 0, 0, 0], "osl18": [3571910, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [3571910, 0, 0, 0, 0, 0, 0]}, {"name": "MULIA TABUNGAN EMAS", "rek18": [0, 0, 0, 0, 0, 0, 0], "osl18": [0, 0, 0, 0, 0, 0, 0], "rek19": [1, 0, 0, 0, 0, 0, 0], "osl19": [1259270, 0, 0, 0, 0, 0, 0]}]}, {"name": "17457:BRI UNIT BOJONGKEDING", "products": [{"name": "GADAI KCA", "rek18": [1, 1, 1, 2, 2, 0, 0], "osl18": [20700000, 11910000, 10880000, 21250000, 13960000, 0, 0], "rek19": [1, 1, 1, 2, 2, 0, 0], "osl19": [20700000, 11910000, 10880000, 21250000, 13960000, 0, 0]}]}]};
 /*__BJDPL_DATA_END__*/
 
 let ACTIVE_DATA = DEFAULT_DATA;
@@ -1690,11 +1757,103 @@ function copyWASummary() {
   });
 }
 
-// === EXCEL UPLOAD & GITHUB EXPORT ENGINE ===
+// === EXCEL UPLOAD & GITHUB AUTO-SYNC ENGINE ===
+const GH_CONFIG_KEY = 'bjdpl_gh_config_v1';
+
+function detectGitHubRepoFromUrl() {
+  try {
+    const host = window.location.hostname || '';
+    const pathParts = (window.location.pathname || '').split('/').filter(Boolean);
+    if (host.endsWith('.github.io')) {
+      const owner = host.replace('.github.io', '');
+      const repo = pathParts.length > 0 && !pathParts[0].endsWith('.html') ? pathParts[0] : (owner + '.github.io');
+      return { owner, repo };
+    }
+  } catch (e) {}
+  return { owner: '', repo: '' };
+}
+
+function loadGithubConfig() {
+  const detected = detectGitHubRepoFromUrl();
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || '{}') || {};
+  } catch (e) {}
+  return {
+    owner: saved.owner || detected.owner || '',
+    repo: saved.repo || detected.repo || '',
+    branch: saved.branch || 'main',
+    path: saved.path || 'data.json',
+    token: saved.token || ''
+  };
+}
+
+function saveGithubConfigFromInputs() {
+  const cfg = {
+    owner: (document.getElementById('ghOwner')?.value || '').trim(),
+    repo: (document.getElementById('ghRepo')?.value || '').trim(),
+    branch: (document.getElementById('ghBranch')?.value || 'main').trim() || 'main',
+    path: (document.getElementById('ghPath')?.value || 'data.json').trim() || 'data.json',
+    token: (document.getElementById('ghToken')?.value || '').trim()
+  };
+  try { localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(cfg)); } catch (e) {}
+  return cfg;
+}
+
+function toggleGithubSettings(forceOpen = null) {
+  const panel = document.getElementById('ghSettingsPanel');
+  if (!panel) return;
+  if (forceOpen === true) panel.classList.remove('hidden');
+  else if (forceOpen === false) panel.classList.add('hidden');
+  else panel.classList.toggle('hidden');
+}
+
+function toggleGhTokenVisibility() {
+  const inp = document.getElementById('ghToken');
+  const btn = document.getElementById('ghTokenEyeBtn');
+  if (!inp || !btn) return;
+  const isPwd = inp.type === 'password';
+  inp.type = isPwd ? 'text' : 'password';
+  btn.textContent = isPwd ? 'Sembunyikan' : 'Tampilkan';
+}
+
+function clearGithubToken() {
+  const inp = document.getElementById('ghToken');
+  if (inp) inp.value = '';
+  const cfg = loadGithubConfig();
+  cfg.token = '';
+  try { localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(cfg)); } catch (e) {}
+  showUploadStatus('Token GitHub telah dihapus dari browser ini.', false);
+}
+
+function autoFillDateFromFile(inputEl, targetInputId) {
+  const file = inputEl?.files?.[0];
+  if (!file) return;
+  const m = file.name.match(/(\d{2})(\d{2})(\d{2,4})/);
+  if (!m) return;
+  const day = parseInt(m[1], 10);
+  const mon = parseInt(m[2], 10);
+  let yr = parseInt(m[3], 10);
+  if (yr < 100) yr += 2000;
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  if (day >= 1 && day <= 31 && mon >= 1 && mon <= 12) {
+    const target = document.getElementById(targetInputId);
+    if (target) target.value = `${day} ${months[mon - 1]} ${yr}`;
+  }
+}
+
 function openUploadModal() {
-  document.getElementById('inputDatePrev').value = ACTIVE_DATA.meta.datePrev;
-  document.getElementById('inputDateCurr').value = ACTIVE_DATA.meta.dateCurr;
+  document.getElementById('inputDatePrev').value = ACTIVE_DATA.meta.dateCurr;
+  document.getElementById('inputDateCurr').value = '';
   document.getElementById('uploadStatusMsg').classList.add('hidden');
+  const cfg = loadGithubConfig();
+  document.getElementById('ghOwner').value = cfg.owner;
+  document.getElementById('ghRepo').value = cfg.repo;
+  document.getElementById('ghBranch').value = cfg.branch;
+  document.getElementById('ghPath').value = cfg.path;
+  document.getElementById('ghToken').value = cfg.token;
+  // Auto-open GitHub settings if not configured yet
+  toggleGithubSettings(!cfg.owner || !cfg.repo || !cfg.token);
   document.getElementById('uploadModal').classList.remove('hidden');
 }
 
@@ -1746,36 +1905,57 @@ function parseBjdplRows(rows) {
   return map;
 }
 
-async function processUploadedExcel() {
+async function processUploadedExcel(silentSuccess = false) {
   if (typeof XLSX === 'undefined') {
     showUploadStatus('Library pembaca Excel belum termuat. Pastikan koneksi internet aktif saat membuka halaman.', true);
-    return;
+    return false;
   }
   const fNomPrev = document.getElementById('fileNomPrev').files[0];
   const fRekPrev = document.getElementById('fileRekPrev').files[0];
   const fNomCurr = document.getElementById('fileNomCurr').files[0];
   const fRekCurr = document.getElementById('fileRekCurr').files[0];
 
-  if (!fNomPrev || !fRekPrev || !fNomCurr || !fRekCurr) {
-    showUploadStatus('Mohon pilih keempat file Excel (Nominal H-1, Rekening H-1, Nominal Hari Ini, dan Rekening Hari Ini).', true);
-    return;
+  if (!fNomCurr || !fRekCurr) {
+    showUploadStatus('Mohon pilih minimal 2 file Hari Ini (File Nominal Hari Ini dan File Rekening Hari Ini).', true);
+    return false;
+  }
+  if ((fNomPrev && !fRekPrev) || (!fNomPrev && fRekPrev)) {
+    showUploadStatus('Untuk mengganti data Pembanding (H-1), mohon pilih keduanya (Nominal H-1 & Rekening H-1) atau kosongkan keduanya agar otomatis pakai data terakhir.', true);
+    return false;
   }
 
-  showUploadStatus('Memproses keempat file Excel...', false);
+  const useAutoShiftPrev = !fNomPrev && !fRekPrev;
+  showUploadStatus(useAutoShiftPrev ? 'Memproses 2 file Hari Ini (menggeser data terkini menjadi H-1)...' : 'Memproses keempat file Excel...', false);
+
   try {
-    const [rNomPrev, rRekPrev, rNomCurr, rRekCurr] = await Promise.all([
-      readExcelFile(fNomPrev),
-      readExcelFile(fRekPrev),
+    const [rNomCurr, rRekCurr] = await Promise.all([
       readExcelFile(fNomCurr),
       readExcelFile(fRekCurr)
     ]);
-
-    const nomPrev = parseBjdplRows(rNomPrev);
-    const rekPrev = parseBjdplRows(rRekPrev);
     const nomCurr = parseBjdplRows(rNomCurr);
     const rekCurr = parseBjdplRows(rRekCurr);
 
-    const datePrev = document.getElementById('inputDatePrev').value.trim() || 'Tanggal Pembanding';
+    let nomPrev = {};
+    let rekPrev = {};
+    if (useAutoShiftPrev) {
+      TARGET_OUTLETS.forEach(o => { nomPrev[o] = {}; rekPrev[o] = {}; });
+      (ACTIVE_DATA.outlets || []).forEach(o => {
+        if (!nomPrev[o.name]) return;
+        (o.products || []).forEach(p => {
+          rekPrev[o.name][p.name] = [...(p.rek19 || Array(7).fill(0))];
+          nomPrev[o.name][p.name] = [...(p.osl19 || Array(7).fill(0))];
+        });
+      });
+    } else {
+      const [rNomPrev, rRekPrev] = await Promise.all([
+        readExcelFile(fNomPrev),
+        readExcelFile(fRekPrev)
+      ]);
+      nomPrev = parseBjdplRows(rNomPrev);
+      rekPrev = parseBjdplRows(rRekPrev);
+    }
+
+    const datePrev = document.getElementById('inputDatePrev').value.trim() || (useAutoShiftPrev ? ACTIVE_DATA.meta.dateCurr : 'Tanggal Pembanding');
     const dateCurr = document.getElementById('inputDateCurr').value.trim() || 'Tanggal Terkini';
 
     const newOutlets = TARGET_OUTLETS.map(o => {
@@ -1798,7 +1978,7 @@ async function processUploadedExcel() {
     const totalCheck = newOutlets.reduce((acc, o) => acc + o.products.length, 0);
     if (totalCheck === 0) {
       showUploadStatus('Data 6 outlet CP Pamanukan tidak ditemukan di file Excel. Pastikan kolom OUTLET, UMUR, PRODUCT, dan BJDPL BLNINI sesuai format Detail BJDPL.', true);
-      return;
+      return false;
     }
 
     ACTIVE_DATA = {
@@ -1806,6 +1986,8 @@ async function processUploadedExcel() {
         branch: 'CP PAMANUKAN',
         datePrev,
         dateCurr,
+        dateMonthPrev: ACTIVE_DATA.meta.dateMonthPrev || '31 Oktober 2026',
+        updatedAt: new Date().toISOString(),
         buckets: UMUR_MAP.map(u => u.label)
       },
       outlets: newOutlets
@@ -1814,9 +1996,136 @@ async function processUploadedExcel() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ACTIVE_DATA)); } catch (e) {}
     document.getElementById('customDataBadge').classList.remove('hidden');
     renderAll();
-    showUploadStatus(`Berhasil! Dashboard diperbarui untuk ${datePrev} vs ${dateCurr}. Anda bisa langsung menutup modal ini atau klik "Download index.html untuk GitHub" agar permanen.`, false);
+    if (!silentSuccess) {
+      showUploadStatus(`Berhasil! Dashboard diperbarui lokal (${datePrev} vs ${dateCurr}). Klik "Publish ke GitHub" agar langsung tampil di semua cabang/pengunjung.`, false);
+    }
+    return true;
   } catch (err) {
     showUploadStatus('Gagal membaca file Excel: ' + (err.message || err), true);
+    return false;
+  }
+}
+
+function utf8ToBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+async function publishToGitHub() {
+  const btn = document.getElementById('publishGithubBtn');
+  const fNomCurr = document.getElementById('fileNomCurr').files[0];
+  const fRekCurr = document.getElementById('fileRekCurr').files[0];
+
+  // If user selected new Excel files, process them first automatically (true 1-click)
+  if (fNomCurr || fRekCurr) {
+    const ok = await processUploadedExcel(true);
+    if (!ok) return;
+  }
+
+  const cfg = saveGithubConfigFromInputs();
+  if (!cfg.owner || !cfg.repo || !cfg.token) {
+    toggleGithubSettings(true);
+    showUploadStatus('Lengkapi Username GitHub, Nama Repository, dan GitHub Personal Access Token terlebih dahulu (cukup 1 kali).', true);
+    return;
+  }
+
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span>Mengunggah ke GitHub...</span>';
+  showUploadStatus(`Menyinkronkan ${cfg.path} ke ${cfg.owner}/${cfg.repo} (${cfg.branch})...`, false);
+
+  try {
+    const apiUrl = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/contents/${cfg.path.split('/').map(encodeURIComponent).join('/')}`;
+    const headers = {
+      'Authorization': `Bearer ${cfg.token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    // 1. Check if data.json already exists to get its SHA
+    let sha = null;
+    const getRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}`, { headers, cache: 'no-store' });
+    if (getRes.ok) {
+      const existing = await getRes.json();
+      sha = existing.sha || null;
+    } else if (getRes.status !== 404) {
+      const errData = await getRes.json().catch(() => ({}));
+      throw new Error(`HTTP ${getRes.status}: ${errData.message || 'Gagal mengecek repository GitHub'}`);
+    }
+
+    // 2. PUT updated data.json
+    const payload = {
+      ...ACTIVE_DATA,
+      meta: {
+        ...ACTIVE_DATA.meta,
+        updatedAt: new Date().toISOString()
+      }
+    };
+    const body = {
+      message: `Update data BJDPL: ${payload.meta.datePrev} vs ${payload.meta.dateCurr}`,
+      content: utf8ToBase64(JSON.stringify(payload, null, 2)),
+      branch: cfg.branch
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!putRes.ok) {
+      const errData = await putRes.json().catch(() => ({}));
+      let hint = errData.message || ('HTTP ' + putRes.status);
+      if (putRes.status === 401) hint = 'Token GitHub tidak valid atau kedaluwarsa. Periksa kembali Personal Access Token Anda.';
+      else if (putRes.status === 403) hint = 'Token tidak memiliki izin tulis. Pastikan izin "Contents: Read and write" aktif pada repo ini.';
+      else if (putRes.status === 404) hint = 'Repository atau branch tidak ditemukan. Periksa Username, Nama Repo, dan Branch.';
+      throw new Error(hint);
+    }
+
+    ACTIVE_DATA = payload;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    document.getElementById('customDataBadge').classList.add('hidden');
+    const liveBadge = document.getElementById('liveSyncBadge');
+    if (liveBadge) liveBadge.classList.remove('hidden');
+    renderAll();
+
+    showUploadStatus(`Berhasil dipublish ke GitHub (${cfg.owner}/${cfg.repo}/${cfg.path})! Semua pengunjung GitHub Pages akan otomatis menerima data ${payload.meta.datePrev} vs ${payload.meta.dateCurr} dalam ~30 detik.`, false);
+  } catch (err) {
+    showUploadStatus('Gagal Publish ke GitHub: ' + (err.message || err), true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+  }
+}
+
+async function syncFromLiveJson() {
+  // Skip live fetch when opened via file:// or sandboxed non-http origin
+  if (!window.location.protocol.startsWith('http')) return;
+  try {
+    const res = await fetch(`./data.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const remote = await res.json();
+    if (!remote || !remote.meta || !Array.isArray(remote.outlets) || remote.outlets.length === 0) return;
+
+    // Prefer remote data.json over stale localStorage/DEFAULT_DATA
+    ACTIVE_DATA = remote;
+    document.getElementById('customDataBadge').classList.add('hidden');
+    const liveBadge = document.getElementById('liveSyncBadge');
+    if (liveBadge) {
+      liveBadge.classList.remove('hidden');
+      if (remote.meta.updatedAt) {
+        try {
+          const dt = new Date(remote.meta.updatedAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+          liveBadge.title = `Disinkronkan otomatis dari data.json (${dt} WIB)`;
+        } catch (e) {}
+      }
+    }
+    renderAll();
+  } catch (e) {
+    // Silent fallback to DEFAULT_DATA when data.json doesn't exist yet or offline
   }
 }
 
@@ -2146,6 +2455,7 @@ function printDashboard(scope = 'active', orientation = 'landscape', dryRun = fa
     }
   } catch (e) {}
   renderAll();
+  syncFromLiveJson();
   initVisitorBadges();
 })();
 </script>
